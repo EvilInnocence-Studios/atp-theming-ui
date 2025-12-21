@@ -1,0 +1,8 @@
+@use "@styles/globals.module.scss";
+
+.themeList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--padding);
+}

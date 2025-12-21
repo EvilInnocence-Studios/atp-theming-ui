@@ -1,0 +1,170 @@
+@use "@styles/globals.module.scss";
+
+.layoutManager {
+    .componentList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        .component {
+            flex: 1 1 31%;
+            max-width: 31%;
+            text-align: center;
+            background-color: var(--bgLightColor);
+            border: solid 4px var(--borderColor);
+            border-radius: var(--borderRadius);
+            img {
+                display: block;
+                width: 100%;
+            }
+        }
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background-color: var(--bgLightColor);
+        border: 1px solid var(--borderColor);
+        border-radius: var(--borderRadius);
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+
+        .breadcrumbItem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumbSeparator {
+            color: var(--textColorMuted, #999);
+            font-size: 12px;
+        }
+
+        .breadcrumbButton {
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: var(--textColor);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+
+            &:hover {
+                background-color: var(--bgColor);
+                color: var(--primaryColor);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+        }
+    }
+
+    .childrenSelector {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--borderColor);
+
+        h4 {
+            margin: 0 0 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--textColor);
+        }
+
+        .emptyChildren {
+            color: var(--textColorMuted, #999);
+            font-size: 13px;
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        .slotList {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .slotGroup {
+            .slotHeader {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-bottom: 8px;
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--textColor);
+
+                .slotIcon {
+                    color: var(--primaryColor);
+                }
+
+                .slotName {
+                    flex: 1;
+                }
+
+                .slotCount {
+                    color: var(--textColorMuted, #999);
+                    font-size: 12px;
+                }
+            }
+
+            .slotChildren {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                padding-left: 20px;
+
+                .emptySlot {
+                    color: var(--textColorMuted, #999);
+                    font-size: 12px;
+                    font-style: italic;
+                    padding: 4px 0;
+                }
+
+                .childItem {
+                    display: flex;
+                    gap: 4px;
+                    align-items: center;
+                }
+
+                .childButton {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 8px 12px;
+                    background: var(--bgLightColor);
+                    border: 1px solid var(--borderColor);
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    font-size: 13px;
+                    color: var(--textColor);
+                    text-align: left;
+                    flex: 1;
+
+                    .componentIcon {
+                        color: var(--primaryColor);
+                        font-size: 14px;
+                    }
+
+                    .componentName {
+                        flex: 1;
+                    }
+
+                    &:hover {
+                        background-color: var(--bgColor);
+                        border-color: var(--primaryColor);
+                        transform: translateX(2px);
+                    }
+
+                    &:active {
+                        transform: translateX(4px);
+                    }
+                }
+            }
+        }
+    }
+}

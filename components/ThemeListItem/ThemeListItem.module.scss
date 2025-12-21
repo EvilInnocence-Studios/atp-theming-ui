@@ -1,0 +1,22 @@
+@use "@styles/globals.module.scss";
+
+.themeListItem {
+    border: solid 1px var(--borderColor);
+    background-color: var(--bgLightColor);
+    border-radius: var(--borderRadius);
+    padding: var(--padding);
+    h2 {
+        margin-top: 0;
+        
+    }
+    :global(.ant-upload-drag) {
+        height: 128px !important;
+    }
+    textarea {
+        margin: var(--padding) 0;
+    }
+    > button {
+        margin-top: var(--padding);
+        width: 100%;
+    }
+}
