@@ -13,6 +13,8 @@ import { getAncestryPath } from "@theming/lib/layout/utils";
 import { Breadcrumb } from "./Breadcrumb.component";
 
 import slotStyles from "@theming/components/SlotRenderer/SlotRenderer.module.scss";
+import { Label } from "@core/components/Label";
+import { Editable } from "@core/components/Editable";
 
 const DraggablePaletteItem = ({ component, classes }: { component: any, classes: any }) => {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -31,7 +33,7 @@ const DraggablePaletteItem = ({ component, classes }: { component: any, classes:
     );
 };
 
-export const LayoutManagerComponent = overridable(({layout, isEditing, selectedId, selectComponent, removeComponent, classes = styles, UpdateButtons}:LayoutManagerProps) => {
+export const LayoutManagerComponent = overridable(({theme, updater, layout, isEditing, showJson, selectedId, selectComponent, removeComponent, classes = styles, UpdateButtons}:LayoutManagerProps) => {
     const { setNodeRef, isOver } = useDroppable({
         id: 'root-layout',
         disabled: !!layout && !!layout.component,
@@ -40,9 +42,12 @@ export const LayoutManagerComponent = overridable(({layout, isEditing, selectedI
     return <div className={classes.layoutManager}>
     <UpdateButtons />
     <Switch checked={isEditing?.isset} onChange={isEditing?.toggle} checkedChildren="Edit" unCheckedChildren="Preview"/>
-    <h1><FontAwesomeIcon icon={faPaintRoller} /> Theme Designer</h1>
+    {isEditing?.isset && <h1>
+        <FontAwesomeIcon icon={faPaintRoller} /> Theme Designer
+        {theme && updater && <Label label="Name"><Editable value={theme.name || ""} onChange={updater.updateString("name")} /></Label>}
+    </h1>}
     <Row gutter={[16,16]}>
-        <Col span={4}>
+        {isEditing?.isset && <Col span={4}>
             <Collapse>
                 {Array.from(ComponentRegistry.getCategories()).map((category) =>
                     <Collapse.Panel header={category} key={category}>
@@ -52,9 +57,9 @@ export const LayoutManagerComponent = overridable(({layout, isEditing, selectedI
                     </Collapse.Panel>
                 )}
             </Collapse>
-        </Col>
-        <Col span={16} id="layout-editor-canvas" style={{ position: 'relative' }}>
-            {layout && layout.component && (
+        </Col>}
+        <Col span={isEditing?.isset ? 16 : 24} id="layout-editor-canvas" style={{ position: 'relative' }}>
+            {layout && layout.component && isEditing?.isset && (
                 <Breadcrumb 
                     path={selectedId ? getAncestryPath(layout, selectedId) : [layout]} 
                     onSelect={selectComponent}
@@ -78,12 +83,13 @@ export const LayoutManagerComponent = overridable(({layout, isEditing, selectedI
                             >
                                 {rootContent}
                             </SelectableItem>
-                            <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                                <h3>Layout JSON</h3>
-                                <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+                            <h3>Layout JSON</h3>
+                            <Switch checked={showJson?.isset} onChange={showJson?.toggle} checkedChildren="Show" unCheckedChildren="Hide"/>
+                            {showJson?.isset && <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+                                <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px', overflow: 'hidden' }}>
                                     {JSON.stringify(layout, null, 2)}
                                 </pre>
-                            </div>
+                            </div>}
                         </>
                     );
                 }
@@ -101,8 +107,8 @@ export const LayoutManagerComponent = overridable(({layout, isEditing, selectedI
                 Drop a component here to start
             </div>}
         </Col>
-        <Col span={4}>
+        {isEditing?.isset && <Col span={4}>
             <PropertyPanel />
-        </Col>
+        </Col>}
     </Row>
 </div>});

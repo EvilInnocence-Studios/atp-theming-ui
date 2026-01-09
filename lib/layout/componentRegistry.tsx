@@ -1,8 +1,7 @@
-import { ISettingDescriptor } from "@common/lib/setting/types";
 import { SlotRenderer } from "@theming/components/SlotRenderer";
+import { forwardRef } from "react";
 import { Index } from "ts-functional/dist/types";
 import { ILayoutComponent } from "./layout";
-import { forwardRef } from "react";
 
 // Component Registry
 
@@ -12,7 +11,6 @@ export declare interface IComponentMetadata {
     displayName?: string;
     description?: string;
     isContainer?: boolean;
-    props?: Index<ISettingDescriptor>;
     propEditor?: (props: any, updateProps: (props: any) => void) => React.ReactNode;
     layoutEditor?: React.FC<any>;
 }
@@ -76,8 +74,9 @@ interface IContainerLayoutComponentProps {
     className?: string,
     style?: React.CSSProperties
 }
-export const containerLayoutComponent = <P extends {children?: any}>(Container: React.ComponentType<P>) => {
+export const containerLayoutComponent = <P extends {children?: any, css?: string}>(Container: React.ComponentType<P>) => {
     const Wrapped = forwardRef<any, IContainerLayoutComponentProps & P>(({ slots, __layoutId, dnd, ...props }, _ref) => {
+        console.log('Container', { slots, __layoutId, dnd, props });
         return (
             <Container 
                 {...props as unknown as P} 

@@ -3,8 +3,14 @@ import React from "react";
 import { ComponentRegistry, containerLayoutComponent } from "./layout/componentRegistry";
 import { Label } from "@core/components/Label";
 
-const Col = containerLayoutComponent(AntDCol);
-const Row = containerLayoutComponent(AntDRow);
+const Col = containerLayoutComponent(({css, ...props}) => <>
+    {!!css && <style>{css}</style>}
+    <AntDCol {...props} />
+</>);
+const Row = containerLayoutComponent(({css, ...props}) => <>
+    {!!css && <style>{css}</style>}
+    <AntDRow {...props} />
+</>);
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 

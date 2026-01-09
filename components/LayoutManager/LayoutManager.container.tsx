@@ -22,6 +22,7 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
         "manual",
     );
     const isEditing = useToggle(true);
+    const showJson = useToggle(false);
 
     const layout:ILayoutComponent | null = updater.history.entity.json?.layout
         ? ensureIds(updater.history.entity.json?.layout)
@@ -127,8 +128,11 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
     );
 
     return <LayoutManagerContext.Provider value={{
+        theme: updater.history.entity,
+        updater,
         layout,
         isEditing,
+        showJson,
         selectedId,
         selectComponent: (id: string | null) => {
             console.log('Selecting component', id);
@@ -146,11 +150,14 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
 };
 
 const injectLayoutManagerProps = createInjector(({ }: ILayoutManagerInputProps): ILayoutManagerProps => {
-    const { layout, isEditing, selectedId, selectComponent, addComponent, removeComponent, updateComponent, UpdateButtons } = useLayoutManager();
+    const {theme, updater, layout, isEditing, showJson, selectedId, selectComponent, addComponent, removeComponent, updateComponent, UpdateButtons } = useLayoutManager();
 
     return {
+        theme,
+        updater,
         layout,
         isEditing,
+        showJson,
         selectedId,
         selectComponent,
         addComponent,

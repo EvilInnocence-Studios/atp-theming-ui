@@ -1,11 +1,14 @@
 import { ITheme } from "@common-shared/theme/types";
 import { ILayoutComponent } from "@core/lib/layout/layout";
-import { IUpdater } from "@core/lib/useUpdater";
 import { IToggle } from "@core/lib/useToggle";
+import { IUpdater } from "@core/lib/useUpdater";
 
 export declare interface ILayoutManagerProps {
+    theme: ITheme | null;
+    updater: IUpdater<ITheme> | null;
     layout: ILayoutComponent | null;
     isEditing: IToggle | null;
+    showJson: IToggle | null;
     selectedId: string | null;
     selectComponent: (id: string | null) => void;
     addComponent: (parentId: string, slotName: string, component: ILayoutComponent, index?: number) => void;
