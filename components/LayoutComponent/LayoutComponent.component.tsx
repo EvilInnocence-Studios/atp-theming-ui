@@ -1,8 +1,8 @@
 import { overridable } from "@core/lib/overridable";
 import { LayoutComponentProps } from "./LayoutComponent.d";
 
-export const LayoutComponentComponent = overridable(({ Component, props, slots }: LayoutComponentProps) =>
+export const LayoutComponentComponent = overridable(({ Component, props, slots, css }: LayoutComponentProps) =>
     Component ? <>
-        <Component {...props} slots={slots} />
+        <Component {...props} css={css} slots={slots} />
     </> : null
 );
