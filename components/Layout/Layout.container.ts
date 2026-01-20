@@ -15,7 +15,7 @@ const injectLayoutProps = createInjector(({element}:ILayoutInputProps):ILayoutPr
         if (!defaultThemeId) return;
         services().theme.get(defaultThemeId).then(setTheme);
     }, [defaultThemeId]);
-
+console.log(theme);
     return {component: theme && theme.json ? (theme.json as any)[element] || null : null};
 });
 

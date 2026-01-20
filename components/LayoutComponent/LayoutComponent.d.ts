@@ -8,9 +8,10 @@ export declare interface ILayoutComponentProps {
 // What gets passed into the component from the parent as attributes
 export declare interface ILayoutComponentInputProps extends ILayoutComponent {
     component: string;
-    props: Index<any>;
-    slots: Index<ILayoutComponent>;
+    props?: Index<any>;
+    slots?: Index<ILayoutComponent>;
     classes?: any;
+    css?: string;
 }
 
 export type LayoutComponentProps = ILayoutComponentInputProps & ILayoutComponentProps;
