@@ -194,7 +194,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                 id={id} 
                 selected={selectedId === id}
                 className={classes.item}
-                title={name || component}
+                title={name || componentDef?.displayName || component}
                 onSelect={() => selectComponent(id)}
                 onDelete={() => removeComponent(id)}
                 isContainer={componentDef?.isContainer}
