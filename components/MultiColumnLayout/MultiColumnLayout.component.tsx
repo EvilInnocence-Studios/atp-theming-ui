@@ -7,9 +7,9 @@ export const MultiColumnLayoutComponent = overridable(({row, columns, className,
     {css && <style>{css}</style>}
     
     <Row className={className} {...row}>
-        {(columns || []).map((column, index) => <>
-            {column.css && <style>{column.css}</style>}
-            <Col key={index} {...column} className={column.className}>
+        {(columns || []).map(({css, className, ...column}, index) => <>
+            {css && <style>{css}</style>}
+            <Col key={index} {...column} className={className}>
                 <SlotRenderer
                     slots={slots?.[`column-${column.id}`]}
                     parentId={__layoutId}
