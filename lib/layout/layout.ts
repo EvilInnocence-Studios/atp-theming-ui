@@ -1,8 +1,6 @@
 import { Index } from "ts-functional/dist/types";
 import { IOperation } from "./derivers";
 
-export declare type RouteTable = Index<ILayoutComponent[]>;
-
 export declare interface ITheme {
     derivers?: Index<IOperation>;
     layout: ILayoutComponent;
@@ -16,6 +14,7 @@ export declare interface ILayoutComponentProps {
 
 export declare interface ILayoutComponent {
     id?: string;
+    name?: string;
     component: string;
     slots?: Index<ILayoutComponent[]>;
     context?: Index<any>;

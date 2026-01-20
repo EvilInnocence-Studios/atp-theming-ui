@@ -1,4 +1,4 @@
-import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, PointerSensor, pointerWithin, useSensor, useSensors } from "@dnd-kit/core";
 import { ILayoutComponent } from "@theming/lib/layout/layout";
 import { addComponent, ensureIds, removeComponent, updateComponent, findComponent, findParent } from "@theming/lib/layout/utils";
 import { overridable } from "@core/lib/overridable";
@@ -13,6 +13,8 @@ import { useUpdater } from "@core/lib/useUpdater";
 import { useToggle } from "@core/lib/useToggle";
 
 export const LayoutManagerProvider = ({ children, themeId }: { children: React.ReactNode, themeId: string }) => {
+    const [element, setElement] = useState<string>("layout");
+    
     const updater = useUpdater<ITheme>(
         "theme",
         themeId,
@@ -24,28 +26,31 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
     const isEditing = useToggle(true);
     const showJson = useToggle(false);
 
-    const layout:ILayoutComponent | null = updater.history.entity.json?.layout
-        ? ensureIds(updater.history.entity.json?.layout)
+    const theme = updater.history.entity.json;
+    const layout:ILayoutComponent | null = updater.history.entity.json?.[element]
+        ? ensureIds(updater.history.entity.json?.[element])
         : null;
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
     const handleAddComponent = useCallback((parentId: string, slotName: string, component: ILayoutComponent, index?: number) => {
         console.log('Adding component', {layout, parentId, slotName, component, index });
-        const newLayout = layout && layout.component ? addComponent(layout, parentId, slotName, ensureIds(component), index) : null;
+        const componentWithId = ensureIds(component);
+        const newLayout = layout && layout.component ? addComponent(layout, parentId, slotName, componentWithId, index) : null;
         console.log('New layout', newLayout);
-        updater.updateObject("json")({layout: newLayout});
+        updater.updateObject("json")({...theme, [element]: newLayout});
+        if (componentWithId.id) setSelectedId(componentWithId.id);
     }, [layout]);
 
     const handleRemoveComponent = useCallback((id: string) => {
         const newLayout = layout && layout.component ? removeComponent(layout, id) : null;
-        updater.updateObject("json")({layout: newLayout});
+        updater.updateObject("json")({...theme, [element]: newLayout});
         if (selectedId === id) setSelectedId(null);
     }, [layout, selectedId]);
 
     const handleUpdateComponent = useCallback((id: string, updates: Partial<ILayoutComponent>) => {
         const newLayout = layout && layout.component ? updateComponent(layout, id, updates) : null;
-        updater.updateObject("json")({layout: newLayout});
+        updater.updateObject("json")({...theme, [element]: newLayout});
     }, [layout]);
 
     const handleDragEnd = useCallback((event: any) => {
@@ -59,7 +64,8 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
             const componentDef = active.data.current?.component;
             if (componentDef) {
                 const newLayout = ensureIds({ component: componentDef.name });
-                updater.updateObject("json")({layout: newLayout});
+                updater.updateObject("json")({...theme, [element]: newLayout});
+                if (newLayout.id) setSelectedId(newLayout.id);
             }
             return;
         }
@@ -114,7 +120,7 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
                 };
                 
                 const newLayout = layout && layout.component ? update(layout) : null;
-                updater.updateObject("json")({layout: newLayout});
+                updater.updateObject("json")({...theme, [element]: newLayout});
             }
         }
     }, [layout, handleAddComponent]);
@@ -133,6 +139,8 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
         layout,
         isEditing,
         showJson,
+        element,
+        setElement,
         selectedId,
         selectComponent: (id: string | null) => {
             console.log('Selecting component', id);
@@ -143,18 +151,20 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
         updateComponent: handleUpdateComponent,
         UpdateButtons: () => <updater.UpdateButtons />,
     }}>
-        <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+        <DndContext onDragEnd={handleDragEnd} sensors={sensors} collisionDetection={pointerWithin}>
             {children}
         </DndContext>
     </LayoutManagerContext.Provider>;
 };
 
 const injectLayoutManagerProps = createInjector(({ }: ILayoutManagerInputProps): ILayoutManagerProps => {
-    const {theme, updater, layout, isEditing, showJson, selectedId, selectComponent, addComponent, removeComponent, updateComponent, UpdateButtons } = useLayoutManager();
+    const {theme, updater, element, setElement, layout, isEditing, showJson, selectedId, selectComponent, addComponent, removeComponent, updateComponent, UpdateButtons } = useLayoutManager();
 
     return {
         theme,
         updater,
+        element,
+        setElement,
         layout,
         isEditing,
         showJson,

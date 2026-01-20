@@ -1,4 +1,4 @@
-import { ILayoutComponent, RouteTable, SlotItem } from "@core/lib/layout/layout";
+import { SlotItem } from "@core/lib/layout/layout";
 
 export declare interface ISlotRendererProps {
 
@@ -10,6 +10,7 @@ export declare interface ISlotRendererInputProps {
     slots?: SlotItem[];
     parentId?: string;
     slotName?: string;
+    getDisplayName?: () => string;
     componentName?: string;
     depth?: number;
 }

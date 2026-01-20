@@ -4,13 +4,11 @@ import { SlotRendererProps } from "./SlotRenderer.d";
 import styles from "./SlotRenderer.module.scss";
 
 import { DeleteBtn } from "@core/components/DeleteBtn";
-import { findMatchingRoute, isRouteTable } from "@core/lib/routeUtils";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useLayoutManager } from "@theming/lib/layout/context";
-import { cloneElement, isValidElement, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import { SlotItemOverlay } from "./SlotItemOverlay";
 
 export const SelectableItem = ({
@@ -40,7 +38,7 @@ export const SelectableItem = ({
                 className={classes?.title}
                 style={{
                     position: 'absolute',
-                    zIndex: 100 + depth,
+                    zIndex: 200 + depth,
                     cursor: 'pointer',
                     padding: '2px 4px',
                     background: selected ? '#1890ff' : 'rgba(0, 0, 0, 0.5)',
@@ -90,8 +88,7 @@ export const SortableItem = ({
     onSelect,
     onDelete,
     data,
-    depth = 0,
-    isContainer
+    depth = 0
 }: {
     id: string,
     children: React.ReactNode,
@@ -115,12 +112,12 @@ export const SortableItem = ({
     } = useSortable({ id, data });
 
     const [node, setNode] = useState<HTMLElement | null>(null);
+    const [isHovered, setIsHovered] = useState(false);
 
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.3 : 1,
-        display: isContainer ? undefined : "contents",
         // @ts-ignore
         '--depth': depth,
     };
@@ -143,31 +140,25 @@ export const SortableItem = ({
                 listeners={listeners}
                 setActivatorNodeRef={setActivatorNodeRef}
                 transform={transform}
+                hovered={isHovered}
             />
-            {isValidElement(children)
-                ? cloneElement(children as React.ReactElement<any>, {
-                    className: `slot-renderer-item-valid ${children.props.className || ''} ${className || ''}`,
-                    "data-selected": selected,
-                    dnd: {
-                        ref: handleRef,
-                        attributes,
-                        listeners,
-                        depth,
-                        selected,
-                        onSelect
-                    },
-                    style: {
-                        ...children.props.style,
-                        ...style,
-                    } as React.CSSProperties
-                })
-                : <div className="slot-renderer-item-invalid" ref={handleRef} style={style}>{children}</div>}
+            <div 
+                className={`slot-renderer-item ${className || ''}`} 
+                ref={handleRef} 
+                style={style}
+                data-selected={selected}
+                onClick={(e) => { e.stopPropagation(); onSelect(); }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                {...attributes}
+            >
+                {children}
+            </div>
         </>
     );
 };
 
-export const SlotRendererComponent = overridable(({ slots, parentId, slotName, classes = styles, depth = 0, componentName }: SlotRendererProps & { depth?: number }) => {
-    const location = useLocation();
+export const SlotRendererComponent = overridable(({ slots, parentId, slotName, classes = styles, depth = 0, getDisplayName }: SlotRendererProps & { depth?: number }) => {
     const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutManager();
 
     const droppableId = (parentId && slotName) ? `${parentId}:${slotName}` : undefined;
@@ -180,17 +171,8 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
         }
     });
 
-    const content = slots?.map((item, index) => {
-        // Check if item is a RouteTable
-        if (isRouteTable(item)) {
-            const matchingComponents = findMatchingRoute(location.pathname, item);
-            if (!matchingComponents) return null;
-
-            return <SlotRendererComponent key={`route-match-${index}`} slots={matchingComponents} parentId={parentId} slotName={slotName} depth={depth} componentName={componentName} />
-        }
-
-        // Standard Component
-        const { component, props, slots, css, id } = item;
+    const content = slots?.map((item) => {
+        const { component, props, slots, css, id, name } = item;
         const componentDef = ComponentRegistry.get(component);
         const layoutEditor = componentDef?.layoutEditor;
         const Component: React.ComponentType<any> | undefined = 
@@ -212,7 +194,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                 id={id} 
                 selected={selectedId === id}
                 className={classes.item}
-                title={component}
+                title={name || component}
                 onSelect={() => selectComponent(id)}
                 onDelete={() => removeComponent(id)}
                 isContainer={componentDef?.isContainer}
@@ -226,6 +208,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
     });
 
     const itemIds = slots?.map(s => (s as any).id).filter(Boolean) || [];
+    const displayName = getDisplayName?.() || slotName;
 
     if (isEditing?.isset && droppableId) {
         const hasItems = slots && slots.length > 0;
@@ -250,7 +233,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
             
             {!hasItems && (
                 <div>
-                    Drop {componentName} {slotName} components here
+                    Drop {displayName} components here
                 </div>
             )}
 
@@ -264,9 +247,15 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                         minHeight: '20px',
                         display: 'block', 
                         backgroundColor: isOver ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
-                        alignSelf: 'stretch'
+                        alignSelf: 'stretch',
+                        padding: '20px',
+                        border: '1px dashed #ccc',
+                        textAlign: 'center',
+                        zIndex: 999,
                     }}
-                />
+                >
+                    Drop {displayName} components here
+                </div>
             )}
         </div>;
     }

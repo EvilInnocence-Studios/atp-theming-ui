@@ -7,6 +7,8 @@ import { IUpdater } from "@core/lib/useUpdater";
 export interface ILayoutManagerContext {
     theme: ITheme | null;
     updater: IUpdater<ITheme> | null;
+    element: string | null;
+    setElement: (element: string) => void;
     layout: ILayoutComponent | null;
     isEditing: IToggle | null;
     showJson: IToggle | null;
@@ -21,6 +23,8 @@ export interface ILayoutManagerContext {
 export const LayoutManagerContext = createContext<ILayoutManagerContext>({
     theme: null,
     updater: null,
+    element: null,
+    setElement: () => {},
     layout: null,
     isEditing: null,
     showJson: null,

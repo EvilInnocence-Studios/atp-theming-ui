@@ -1,7 +1,7 @@
 import { Index } from "ts-functional/dist/types";
 import { ILayoutComponent } from "./layout";
 
-const uuidv4 = () => {
+export const uuidv4 = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
@@ -17,7 +17,7 @@ export const ensureIds = (component: ILayoutComponent): ILayoutComponent => {
                 if ('component' in item) {
                     return ensureIds(item as ILayoutComponent);
                 }
-                // Handle RouteTable if necessary, for now assuming simple components in slots for editor
+
                 return item;
             });
         });

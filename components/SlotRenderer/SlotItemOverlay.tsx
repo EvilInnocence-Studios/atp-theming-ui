@@ -17,6 +17,7 @@ interface SlotItemOverlayProps {
     listeners?: any;
     setActivatorNodeRef?: (element: HTMLElement | null) => void;
     transform?: any;
+    hovered?: boolean;
 }
 
 export const SlotItemOverlay = ({
@@ -29,7 +30,8 @@ export const SlotItemOverlay = ({
     depth = 0,
     listeners,
     setActivatorNodeRef,
-    transform
+    transform,
+    hovered
 }: SlotItemOverlayProps) => {
     const [rect, setRect] = useState<DOMRect | null>(null);
 
@@ -126,7 +128,7 @@ export const SlotItemOverlay = ({
         };
     }, [targetNode, transform]); 
 
-    if (!targetNode || !rect || !selected) return null;
+    if (!targetNode || !rect) return null; // Removed !selected check to allow hover rendering
 
     const portalContainer = document.getElementById('layout-editor-canvas');
     if (!portalContainer) return null;
@@ -137,9 +139,9 @@ export const SlotItemOverlay = ({
         left: rect.left,
         width: rect.width,
         height: rect.height,
-        border: '2px solid #1890ff',
+        outline: selected ? '2px solid #1890ff' : (hovered ? `2px solid hsl(${depth * 60}, 70%, 50%)` : 'none'),
         boxSizing: 'border-box' as const,
-        zIndex: 100 + depth,
+        zIndex: 200 + depth,
         pointerEvents: 'none' as const,
         transform: transform ? CSS.Transform.toString(transform) : undefined
     };
@@ -148,7 +150,7 @@ export const SlotItemOverlay = ({
         <div style={overlayStyle}>
             
             {/* Toolbar */}
-            <div
+            {selected && <div
                 className={classes.overlayToolbar}
                 style={{
                     position: 'absolute',
@@ -179,7 +181,7 @@ export const SlotItemOverlay = ({
                 </span>
                 <span>{title}</span>
                 <DeleteBtn onClick={onDelete} entityType={`${title} component`} />
-            </div>
+            </div>}
         </div>,
         portalContainer
     );

@@ -7,7 +7,6 @@ export const useTheme = () => {
 
     // Apply the theme variables to the document root
     useEffect(() => {
-        console.log(variables);
         Object.entries(variables).forEach(([key, value]) => {
             if (value) {
                 let computedValue = value;

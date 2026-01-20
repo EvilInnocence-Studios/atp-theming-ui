@@ -6,6 +6,8 @@ import { IUpdater } from "@core/lib/useUpdater";
 export declare interface ILayoutManagerProps {
     theme: ITheme | null;
     updater: IUpdater<ITheme> | null;
+    element: string | null;
+    setElement: (element: string) => void;
     layout: ILayoutComponent | null;
     isEditing: IToggle | null;
     showJson: IToggle | null;
