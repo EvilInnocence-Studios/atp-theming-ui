@@ -41,12 +41,15 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
 
     return <div className={classes.layoutManager}>
         <Row gutter={[16,16]}>
-            <Col span={6}>
+            <Col span={4}>
                 <h1>
                     <FontAwesomeIcon icon={faPaintRoller} /> Theme Designer
                 </h1>
             </Col>
-            <Col span={12}>
+            <Col span={6}>
+                <Select className={classes.layoutElementSelect} options={LayoutRegistry.getOptions()} value={element} onChange={setElement} />
+            </Col>
+            <Col span={8}>
                 {theme && updater && <Label label="Theme Name"><Editable value={theme.name || ""} onChange={updater.updateString("name")} /></Label>}
             </Col>
             <Col span={6}>
@@ -60,9 +63,7 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
         <hr />
         <Row gutter={[16,16]}>
             {isEditing?.isset && <Col span={4}>
-                <Select className={classes.layoutElementSelect} options={LayoutRegistry.getOptions()} value={element} onChange={setElement} />
-                <hr />
-                <Collapse>
+                <Collapse accordion>
                     {Array.from(ComponentRegistry.getCategories()).map((category) =>
                         <Collapse.Panel header={category} key={category}>
                             <div className={classes.componentList}>
