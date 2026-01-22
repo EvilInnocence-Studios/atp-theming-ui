@@ -19,6 +19,7 @@ export declare interface IComponentMetadata {
     isContainer?: boolean;
     propEditor?: (props: any, updateProps: (props: any) => void, updateProp: (prop: string ) => (value: any) => void) => React.ReactNode;
     layoutEditor?: LayoutEditor;
+    getSlotDisplayName?: (slotName: string, props: any) => string;
 }
 
 export declare interface IComponentRegistration extends IComponentMetadata {

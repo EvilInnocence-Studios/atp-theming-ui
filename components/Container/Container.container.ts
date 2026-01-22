@@ -22,5 +22,6 @@ export const Container = withLayoutMetadata(
         category: "Layouts",
         description: "A basic container for separating content",
         icon,
+        getSlotDisplayName: (slotName) => slotName === 'children' ? 'Children' : slotName,
     }
 );

@@ -147,7 +147,7 @@ export const ChildrenSelector = ({ selectedComponent, onSelectChild, onDeleteChi
                         <div key={slotName} className={styles.slotGroup}>
                             <div className={styles.slotHeader}>
                                 <FontAwesomeIcon icon={faFolder} className={styles.slotIcon} />
-                                <span className={styles.slotName}>{slotName}</span>
+                                <span className={styles.slotName}>{ComponentRegistry.get(selectedComponent.component)?.getSlotDisplayName?.(slotName, selectedComponent.props || {}) || slotName}</span>
                                 <span className={styles.slotCount}>({slotItems.length})</span>
                             </div>
                             <div className={styles.slotChildren}>

@@ -24,5 +24,11 @@ export const MultiColumnLayout = withLayoutMetadata(
         description: "A multi column layout",
         icon,
         propEditor: MultiColumnLayoutPropEditor,
+        getSlotDisplayName: (slotName, props) => {
+            if (!slotName.startsWith('column-')) return slotName;
+            const id = slotName.replace('column-', '');
+            const index = props.columns?.findIndex((c: any) => c.id === id);
+            return (index !== undefined && index !== -1) ? `Column ${index + 1}` : slotName;
+        },
     }
 );

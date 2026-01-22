@@ -54,10 +54,18 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
     }, [layout]);
 
     const handleDragEnd = useCallback((event: any) => {
-        console.log("Drag end layout", layout);
-        console.log("Drag end event", event);
         const { active, over } = event;
-        if (!over) return;
+        console.log("Drag end event safe", { 
+            activeId: active?.id, 
+            overId: over?.id, 
+            activeData: active?.data?.current,
+            overData: over?.data?.current 
+        });
+
+        if (!over) {
+            console.log("Drag end: No over target");
+            return;
+        }
 
         if (over.id === 'root-layout') {
             console.log("Adding root component", active.data.current?.component);

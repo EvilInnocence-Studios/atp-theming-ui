@@ -162,6 +162,8 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
     const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutManager();
 
     const droppableId = (parentId && slotName) ? `${parentId}:${slotName}` : undefined;
+    const itemIds = slots?.map(s => (s as any).id).filter(Boolean) || [];
+
     const { setNodeRef, isOver } = useDroppable({
         id: droppableId || 'unknown-slot',
         disabled: !isEditing || !droppableId,
@@ -207,7 +209,6 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
         return itemContent;
     });
 
-    const itemIds = slots?.map(s => (s as any).id).filter(Boolean) || [];
     const displayName = getDisplayName?.() || slotName;
 
     if (isEditing?.isset && droppableId) {
@@ -225,7 +226,11 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                 textAlign: (!hasItems) ? 'center' : undefined,
             }}
             // If empty, we attach ref here. If not empty, we attach ref to the filler.
-            ref={!hasItems ? setNodeRef : undefined}
+            ref={(node) => {
+                if (!hasItems) {
+                    setNodeRef(node);
+                }
+            }}
         >
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
                 {content}
