@@ -5,9 +5,17 @@ import icon from './icon.svg';
 import { RouteTableComponent } from "./RouteTable.component";
 import { IRouteTableInputProps, IRouteTableProps, RouteTableProps } from "./RouteTable.d";
 import { RouteTablePropEditor } from "./RouteTable.props";
+import { useLayoutManager } from "@theming/lib/layout/context";
+import { findMatchingRoute } from "@core/lib/routeUtils";
+import { useLocation } from "react-router";
 
-const injectRouteTableProps = createInjector(({__activeRoute}:IRouteTableInputProps):IRouteTableProps => {
-    const activeRoute = __activeRoute;
+const injectRouteTableProps = createInjector(({__activeRoute, routes}:IRouteTableInputProps):IRouteTableProps => {
+    const {isEditing} = useLayoutManager();
+
+    const locationPath = useLocation().pathname;
+    const matchingRouteId = findMatchingRoute(locationPath, routes);
+
+    const activeRoute = isEditing ? __activeRoute : matchingRouteId;
     
     return {activeRoute};
 });
