@@ -2,6 +2,7 @@ import { Index } from "ts-functional/dist/types";
 
 export declare interface IRouteTableProps {
     activeRoute?: string;
+    isEditing: boolean | null;
 }
 
 // What gets passed into the component from the parent as attributes

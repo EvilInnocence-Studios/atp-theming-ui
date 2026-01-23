@@ -3,11 +3,11 @@ import {RouteTableProps} from "./RouteTable.d";
 import styles from './RouteTable.module.scss';
 import { SlotRenderer } from "../SlotRenderer";
 
-export const RouteTableComponent = overridable(({classes = styles, slots, __layoutId, className, css, activeRoute, routes}:RouteTableProps) => {
+export const RouteTableComponent = overridable(({classes = styles, slots, __layoutId, className, css, activeRoute, routes, isEditing}:RouteTableProps) => {
     return <>
     {css && <style>{css}</style>}
     <div className={className}>
-        {Object.entries(routes || {}).map(([routeId, routeName]) => (
+        {isEditing && Object.entries(routes || {}).map(([routeId, routeName]) => (
             <div key={routeId} style={{ display: activeRoute === routeId ? 'contents' : 'none' }}>
                 <SlotRenderer
                     slots={slots?.[routeId]}
@@ -17,5 +17,11 @@ export const RouteTableComponent = overridable(({classes = styles, slots, __layo
                 />
             </div>
         ))}
+        {!isEditing && <SlotRenderer
+            slots={slots?.[activeRoute || ""]}
+            parentId={__layoutId}
+            slotName={activeRoute}
+            getDisplayName={() => activeRoute || ""}
+        />}
     </div>
 </>});

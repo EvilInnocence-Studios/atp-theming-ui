@@ -15,9 +15,9 @@ const injectRouteTableProps = createInjector(({__activeRoute, routes}:IRouteTabl
     const locationPath = useLocation().pathname;
     const matchingRouteId = findMatchingRoute(locationPath, routes);
 
-    const activeRoute = isEditing ? __activeRoute : matchingRouteId;
+    const activeRoute = isEditing?.isset ? __activeRoute : matchingRouteId;
     
-    return {activeRoute};
+    return {activeRoute, isEditing: isEditing?.isset || null};
 });
 
 const connect = inject<IRouteTableInputProps, RouteTableProps>(mergeProps(
