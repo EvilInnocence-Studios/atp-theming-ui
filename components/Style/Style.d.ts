@@ -1,7 +1,8 @@
+import { ThemeConfig } from "antd";
 import { Index } from "ts-functional/dist/types";
 
 export declare interface IStyleProps {
-
+    theme: ThemeConfig;
 }
 
 export declare interface IStyleVar {

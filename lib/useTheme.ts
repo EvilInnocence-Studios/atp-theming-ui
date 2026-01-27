@@ -1,23 +1,13 @@
-import { useEffect } from "react";
-import { useSettingGroup } from "@common/lib/setting/services"
+import { IStyleVar } from "@theming/components/Style/Style";
 import { ThemeConfig, theme as antTheme } from "antd";
+import { Index } from "ts-functional/dist/types";
 
-export const useTheme = () => {
-    const variables = useSettingGroup('theme') || {};
-
-    // Apply the theme variables to the document root
-    useEffect(() => {
-        Object.entries(variables).forEach(([key, value]) => {
-            if (value) {
-                let computedValue = value;
-                while(computedValue.startsWith("var(")) {
-                    const varName = computedValue.slice(6, -1).trim();
-                    computedValue = variables[varName];
-                }
-                document.documentElement.style.setProperty(`--${key}`, computedValue);
-            }
-        });
-    }, [variables]);
+export const useTheme = (vars:Index<IStyleVar>) => {
+    // Map var values to names
+    const variables = Object.values(vars || {}).reduce((acc, v) => {
+        acc[v.name] = v.value;
+        return acc;
+    }, {} as Index<string>);
 
     // Generate and return the Ant Design theme tokens
     const theme:ThemeConfig = Object.keys(variables).length === 0 ? {algorithm: antTheme.darkAlgorithm} : {

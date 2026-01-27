@@ -5,9 +5,12 @@ import { overridable } from "@core/lib/overridable";
 import { withLayoutMetadata } from "@theming/lib/layout/componentRegistry";
 import icon from './icon.svg';
 import { StylePropEditor } from "./Style.props";
+import { useTheme } from "@theming/lib/useTheme";
 
-const injectStyleProps = createInjector(({}:IStyleInputProps):IStyleProps => {
-    return {};
+const injectStyleProps = createInjector(({vars}:IStyleInputProps):IStyleProps => {
+    const theme = useTheme(vars || {});
+    
+    return {theme};
 });
 
 const connect = inject<IStyleInputProps, StyleProps>(mergeProps(
