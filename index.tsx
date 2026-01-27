@@ -3,6 +3,7 @@ import { StandardLayout } from "@theming/components/StandardLayout";
 import { Container } from "./components/Container";
 import { MultiColumnLayout } from "./components/MultiColumnLayout";
 import { RouteTable } from "./components/RouteTable";
+import { Style } from "./components/Style";
 import { Text } from "./components/Text";
 import { ComponentRegistry, LayoutRegistry } from "./lib/layout/componentRegistry";
 import { themingMenus } from "./lib/menus";
@@ -20,6 +21,7 @@ ComponentRegistry.register(MultiColumnLayout);
 ComponentRegistry.register(Container);
 ComponentRegistry.register(Text);
 ComponentRegistry.register(RouteTable);
+ComponentRegistry.register(Style);
 
 LayoutRegistry.register({name: "layout", displayName: "Page Layout", description: "The site container (header, footer, etc.)", defaultLayout: {
     component: "Content",
