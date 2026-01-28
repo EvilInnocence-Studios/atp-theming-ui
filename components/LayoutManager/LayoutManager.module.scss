@@ -87,22 +87,18 @@
         border-top: 1px solid var(--borderColor);
     }
 
-    .propertyPanel {
-        padding: var(--padding);
-        border: 1px solid var(--borderColor);
-        h3 {
-            margin-top: 0;
-            background-color: var(--bgLightColor);
-            padding: 8px 0 8px 36px;
-            border-radius: var(--borderRadius);
-            position: relative;
-            svg {
-                width: 32px;
-                height: 32px;
-                position: absolute;
-                left: 2px;
-                top: 2px;
-            }
+    h3.paletteHeader {
+        margin-top: 0;
+        background-color: var(--bgLightColor);
+        padding: 8px 0 8px 36px;
+        border-radius: var(--borderRadius);
+        position: relative;
+        svg {
+            width: 32px;
+            height: 32px;
+            position: absolute;
+            left: 2px;
+            top: 2px;
         }
     }
 

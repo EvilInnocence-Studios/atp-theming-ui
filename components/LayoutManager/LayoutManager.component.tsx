@@ -33,11 +33,26 @@ const DraggablePaletteItem = ({ component, classes }: { component: any, classes:
     );
 };
 
+// ... imports
+import { ConfigProvider } from "antd";
+import { useTheme } from "@theming/lib/useTheme";
+import { objMap } from "ts-functional";
+import { IStyleVar } from "@theming/components/Style/Style.d";
+import { ILayoutComponent } from "@theming/lib/layout/layout";
+
+// ... existing code ...
+
 export const LayoutManagerComponent = overridable(({theme, updater, element, setElement, layout, isEditing, showJson, selectedId, selectComponent, removeComponent, classes = styles, UpdateButtons}:LayoutManagerProps) => {
     const { setNodeRef, isOver } = useDroppable({
         id: 'root-layout',
         disabled: !!layout && !!layout.component,
     });
+
+    // Find the Style layout to get global vars
+    const styleLayout = theme && theme.json ? Object.values(theme.json).find((c:any) => c.component === "Style") as ILayoutComponent : null;
+    const styleVars = styleLayout?.props?.vars;
+    const styleCss = styleLayout?.props?.css;
+    const antTheme = useTheme(styleVars || {});
 
     return <div className={classes.layoutManager}>
         <Row gutter={[16,16]}>
@@ -63,6 +78,7 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
         <hr />
         <Row gutter={[16,16]}>
             {isEditing?.isset && <Col span={4}>
+                <h3 className={styles.paletteHeader}>Available Components</h3>
                 <Collapse accordion>
                     {Array.from(ComponentRegistry.getCategories()).map((category) =>
                         <Collapse.Panel header={category} key={category}>
@@ -74,6 +90,19 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                 </Collapse>
             </Col>}
             <Col span={isEditing?.isset ? 14 : 24} id="layout-editor-canvas" style={{ position: 'relative' }}>
+                <ConfigProvider theme={antTheme}>
+                    {styleCss && <style>{styleCss}</style>}
+                    <style>
+                        {/* {`
+                            :root {
+                                ${Object.values(objMap<IStyleVar, string>(v => `--${v.name}: ${v.value};`)(styleVars || {})).join("\n")}
+                            }
+                        `} */}
+                        {/* Scope variables to the editor canvas if possible, or just :root if acceptable for preview */}
+                        {`:root {
+                            ${Object.values(objMap<IStyleVar, string>(v => `--${v.name}: ${v.value};`)(styleVars || {})).join("\n")}
+                        }`}
+                    </style>
                 {layout && layout.component && isEditing?.isset && (
                     <Breadcrumb 
                         path={selectedId ? getAncestryPath(layout, selectedId) : [layout]} 
@@ -121,6 +150,7 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                 }}>
                     Drop a component here to start
                 </div>}
+                </ConfigProvider>
             </Col>
             {isEditing?.isset && <Col span={6}>
                 <PropertyPanel />

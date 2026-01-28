@@ -7,6 +7,7 @@ import { findComponent } from "@theming/lib/layout/utils";
 import SVG from 'react-inlinesvg';
 import { ChildrenSelector } from "./ChildrenSelector.component";
 import styles from "./LayoutManager.module.scss";
+import { Card, Collapse } from "antd";
 
 export const PropertyPanel = overridable(() => {
     const { layout, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutManager();
@@ -43,33 +44,46 @@ export const PropertyPanel = overridable(() => {
     }
 
     return <div className={styles.propertyPanel}>
-        <h3>{componentDef.icon && <SVG src={componentDef.icon} />} {componentDef.displayName || componentDef.name} Properties</h3>
-        <Label label="Name">
-            <Editable value={selectedComponent.name || ""} onChange={updateName} />
-        </Label>
-        <Label label="Class">
-            <Editable value={selectedComponent.props?.className} onChange={updateClassName} />
-        </Label>
-        <h4 style={{marginBottom: 0}}>Additional CSS Styling</h4>
-        <Editable textArea value={selectedComponent.css || ""} captureTab onChange={updateCss} placeholder="Enter CSS here"/>
-        {componentDef.propEditor && <div className={styles.propEditor}>
-            {componentDef.propEditor(selectedComponent.props || {}, (newProps: any) => {
-                if (selectedId) {
-                    updateComponent(selectedId, { props: newProps });
-                }
-            }, updateProp)}
+        <h3 className={styles.paletteHeader}>
+            {componentDef.icon && <SVG src={componentDef.icon} />}
+            <b>{selectedComponent.name || componentDef.displayName || componentDef.name}</b> <em>Properties</em>
+        </h3>
+        <div className={styles.cssPanel}>
+            <Collapse accordion>
+                <Collapse.Panel key="css" header="Custom Styling">
+                    <Label label="Name">
+                        <Editable value={selectedComponent.name || ""} onChange={updateName} />
+                    </Label>
+                    <Label label="Class">
+                        <Editable value={selectedComponent.props?.className} onChange={updateClassName} />
+                    </Label>
+                    <h4>Custom CSS</h4>
+                    <Editable textArea value={selectedComponent.css || ""} captureTab onChange={updateCss} placeholder="Enter CSS here"/>
+                </Collapse.Panel>
+                <Collapse.Panel key="props" header="Properties">
+                    {componentDef.propEditor && <div className={styles.propEditor}>
+                        {componentDef.propEditor(selectedComponent.props || {}, (newProps: any) => {
+                            if (selectedId) {
+                                updateComponent(selectedId, { props: newProps });
+                            }
+                        }, updateProp)}
 
-        </div>}
-        {!componentDef.propEditor && <>
-            <br/><br/>
-            <em>No configurable properties</em>
-        </>}
-        <ChildrenSelector 
-            selectedComponent={selectedComponent} 
-            onSelectChild={selectComponent}
-            onDeleteChild={removeComponent}
-            onUpdateComponent={(updates) => selectedId && updateComponent(selectedId, updates)}
-        />
+                    </div>}
+                    {!componentDef.propEditor && <>
+                        <br/><br/>
+                        <em>No configurable properties</em>
+                    </>}
+                </Collapse.Panel>
+                <Collapse.Panel key="children" header="Children">
+                    <ChildrenSelector 
+                        selectedComponent={selectedComponent} 
+                        onSelectChild={selectComponent}
+                        onDeleteChild={removeComponent}
+                        onUpdateComponent={(updates) => selectedId && updateComponent(selectedId, updates)}
+                    />
+                </Collapse.Panel>
+            </Collapse>
+        </div>
     </div>;
 });
 
