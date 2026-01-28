@@ -39,6 +39,7 @@ import { useTheme } from "@theming/lib/useTheme";
 import { objMap } from "ts-functional";
 import { IStyleVar } from "@theming/components/Style/Style.d";
 import { ILayoutComponent } from "@theming/lib/layout/layout";
+import clsx from "clsx";
 
 // ... existing code ...
 
@@ -89,17 +90,11 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                     )}
                 </Collapse>
             </Col>}
-            <Col span={isEditing?.isset ? 14 : 24} id="layout-editor-canvas" style={{ position: 'relative' }}>
+            <Col span={isEditing?.isset ? 14 : 24} style={{ position: 'relative' }}>
                 <ConfigProvider theme={antTheme}>
                     {styleCss && <style>{styleCss}</style>}
                     <style>
-                        {/* {`
-                            :root {
-                                ${Object.values(objMap<IStyleVar, string>(v => `--${v.name}: ${v.value};`)(styleVars || {})).join("\n")}
-                            }
-                        `} */}
-                        {/* Scope variables to the editor canvas if possible, or just :root if acceptable for preview */}
-                        {`:root {
+                        {`.layout-editor-canvas {
                             ${Object.values(objMap<IStyleVar, string>(v => `--${v.name}: ${v.value};`)(styleVars || {})).join("\n")}
                         }`}
                     </style>
@@ -123,7 +118,7 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                                     onSelect={() => selectComponent(layout.id!)}
                                     onDelete={() => removeComponent(layout.id!)}
                                     classes={slotStyles} // Use SlotRenderer styles for the item
-                                    className={slotStyles.item}
+                                    className={clsx(slotStyles.item, "layout-editor-canvas")}
                                 >
                                     {rootContent}
                                 </SelectableItem>
