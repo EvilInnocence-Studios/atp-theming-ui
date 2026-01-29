@@ -1,5 +1,5 @@
 import { Index } from "ts-functional/dist/types";
-import { ILayoutComponent } from "./layout";
+import { ILayoutComponent, ILayoutComponentSerialized } from "./layout";
 
 // Component Registry
 
@@ -11,7 +11,7 @@ export declare interface ILayoutEditorProps {
 }
 export declare type LayoutEditor = React.FC<ILayoutEditorProps>;
 
-export declare interface IComponentMetadata {
+export declare interface IComponentMetadata<T = undefined> {
     category?: string;
     icon?: string;
     displayName?: string;
@@ -20,6 +20,8 @@ export declare interface IComponentMetadata {
     propEditor?: (props: any, updateProps: (props: any) => void, updateProp: (prop: string ) => (value: any) => void) => React.ReactNode;
     layoutEditor?: LayoutEditor;
     getSlotDisplayName?: (slotName: string, props: any) => string;
+    serialize?: (cmp:ILayoutComponent) => Promise<ILayoutComponentSerialized<T>>;
+    deserialize?: (cmp:ILayoutComponentSerialized<T>) => Promise<ILayoutComponent>;
 }
 
 export declare interface IComponentRegistration extends IComponentMetadata {
@@ -29,9 +31,9 @@ export declare interface IComponentRegistration extends IComponentMetadata {
 
 const components: Index<IComponentRegistration> = {};
 
-export const withLayoutMetadata = <P extends object>(
+export const withLayoutMetadata = <P extends object, T = undefined>(
     Component: React.FC<P>,
-    metadata: IComponentMetadata & { name: string }
+    metadata: IComponentMetadata<T> & { name: string }
 ): React.FC<P> => {
     (Component as any).layoutMetadata = metadata;
     return Component;

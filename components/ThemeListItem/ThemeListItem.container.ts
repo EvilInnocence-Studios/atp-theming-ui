@@ -6,6 +6,7 @@ import { useUpdater } from "@core/lib/useUpdater";
 import { ITheme } from "@common-shared/theme/types";
 import { services } from "@core/lib/api";
 import { flash } from "@core/lib/flash";
+import { serializeTheme } from "@theming/lib/serialize";
 
 const injectThemeListItemProps = createInjector(({theme, refresh}:IThemeListItemInputProps):IThemeListItemProps => {
     const updater = useUpdater<ITheme>(
@@ -25,7 +26,18 @@ const injectThemeListItemProps = createInjector(({theme, refresh}:IThemeListItem
         .then(refresh)
         .catch(() => {flash.error(`Failed to remove theme`)});
 
-    return {...updater, upload, remove};
+    const exportTheme = async () => {
+        const serializedTheme = await serializeTheme(theme);
+        const blob = new Blob([JSON.stringify(serializedTheme, null, 2)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${theme.name}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    return {...updater, upload, remove, exportTheme};
 });
 
 const connect = inject<IThemeListItemInputProps, ThemeListItemProps>(mergeProps(

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { createInjector, inject, mergeProps } from "unstateless";
 import { ThemeManagerComponent } from "./ThemeManager.component";
 import { IThemeManagerInputProps, IThemeManagerProps, ThemeManagerProps } from "./ThemeManager.d";
+import { deserializeTheme } from "@theming/lib/serialize";
 
 const newTheme: NewTheme = {
     name: "New Theme",
@@ -56,8 +57,33 @@ const injectThemeManagerProps = createInjector(({}:IThemeManagerInputProps):IThe
             })
             .catch(flash.error(`Failed to set default theme`));
     }
+
+    const importTheme = async (file: File) => {
+        const text = await file.text();
+        const [theme, thumb] = await deserializeTheme(JSON.parse(text));
+
+        if(!theme) {
+            flash.error(`Failed to import theme`);
+            return;
+        }
+
+        // Convert the thumb Blob from base64 text to a File object
+        let thumbFile:File | null = null;
+        if(thumb && theme.imageUrl) {
+            const blob = await thumb.arrayBuffer();
+            thumbFile = new File([blob], theme.imageUrl);
+        }
+
+        services().theme.create(theme).then((theme) => {
+            if (thumbFile) {
+                services().theme.image.upload(theme.id, thumbFile).catch(flash.error(`Failed to import theme image`));
+            }
+            flash.success(`Theme imported successfully`);
+            refresh();
+        }).catch(flash.error(`Failed to import theme`));
+    }
     
-    return {create, themes, isLoading: loader.isLoading, refresh, defaultThemeId, setDefaultTheme};
+    return {create, themes, isLoading: loader.isLoading, refresh, defaultThemeId, setDefaultTheme, importTheme};
 });
 
 const connect = inject<IThemeManagerInputProps, ThemeManagerProps>(mergeProps(

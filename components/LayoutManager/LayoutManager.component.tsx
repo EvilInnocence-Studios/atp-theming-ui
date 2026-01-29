@@ -125,7 +125,7 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                                 <h3>Layout JSON</h3>
                                 <Switch checked={showJson?.isset} onChange={showJson?.toggle} checkedChildren="Show" unCheckedChildren="Hide"/>
                                 {showJson?.isset && <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                                    <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px', overflow: 'hidden' }}>
+                                    <pre style={{padding: '10px', borderRadius: '4px', overflow: 'hidden' }}>
                                         {JSON.stringify(layout, null, 2)}
                                     </pre>
                                 </div>}

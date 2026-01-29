@@ -1,20 +1,28 @@
+import { DeleteBtn } from "@core/components/DeleteBtn";
 import { Editable } from "@core/components/Editable";
 import { S3Image } from "@core/components/S3Image";
 import { overridable } from "@core/lib/overridable";
-import { faPaintRoller, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faFileExport, faPaintRoller, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Space, Switch, Upload } from "antd";
+import { Link } from "react-router";
 import { ThemeListItemProps } from "./ThemeListItem.d";
 import styles from './ThemeListItem.module.scss';
-import { Link } from "react-router";
-import { DeleteBtn } from "@core/components/DeleteBtn";
 
-export const ThemeListItemComponent = overridable(({classes = styles, theme, updateString, updateToggle, upload, remove, defaultThemeId, setDefaultTheme}:ThemeListItemProps) =>
+export const ThemeListItemComponent = overridable(({
+    classes = styles,
+    theme, updateString, updateToggle,
+    upload, remove, exportTheme,
+    defaultThemeId, setDefaultTheme
+}:ThemeListItemProps) =>
     <div className={classes.themeListItem}>
         <Space align="baseline">
             <h2>
                 <Editable value={theme.name} onChange={updateString("name")} />
             </h2>
+            <Button type="default" size="small" onClick={exportTheme}>
+                <FontAwesomeIcon icon={faFileExport} /> Export
+            </Button>
             <Button size="small" type={theme.id === defaultThemeId ? "primary" : "default"} onClick={setDefaultTheme(theme.id)}>
                 Default
             </Button>
@@ -30,6 +38,6 @@ export const ThemeListItemComponent = overridable(({classes = styles, theme, upd
                 <FontAwesomeIcon icon={faPaintRoller} /> Design
             </Link>
         </Button>
-        <Editable textArea value={theme.description} onChange={updateString("description")} />
+        <Editable placeholder="Theme description goes here." textArea value={theme.description} onChange={updateString("description")} />
     </div>
 );

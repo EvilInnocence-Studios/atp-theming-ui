@@ -1,6 +1,14 @@
 @use "@styles/globals.module.scss";
 
+.clearCacheButton {
+    :global(.ant-space-compact){
+        text-align: right;
+        width: auto;
+        display: block;
+    }
+}
 .themeList {
+    margin-top: 8px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

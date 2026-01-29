@@ -1,6 +1,8 @@
 @use "@styles/globals.module.scss";
 
 .themeListItem {
+    flex-grow: 1;
+    max-width: 32%;
     border: solid 1px var(--borderColor);
     background-color: var(--bgLightColor);
     border-radius: var(--borderRadius);

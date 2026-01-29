@@ -5,6 +5,7 @@ export declare interface IThemeManagerProps {
     refresh: () => void;
     defaultThemeId: string | null;
     setDefaultTheme: (id: string) => () => void;
+    importTheme: (file: File) => void;
 }
 
 // What gets passed into the component from the parent as attributes

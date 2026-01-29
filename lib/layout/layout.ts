@@ -1,9 +1,13 @@
 import { Index } from "ts-functional/dist/types";
-import { IOperation } from "./derivers";
+// import { IOperation } from "./derivers";
 
 export declare interface ITheme {
-    derivers?: Index<IOperation>;
-    layout: ILayoutComponent;
+    // derivers?: Index<IOperation>;
+    [id:string]: ILayoutComponent;
+}
+
+export declare interface IThemeSerialized {
+    [id:string]: ILayoutComponentSerialized<any>;
 }
 
 export declare interface ILayoutComponentProps {
@@ -21,4 +25,9 @@ export declare interface ILayoutComponent {
     props?: Index<any>;
     css?: string;
     map?: Index<string | { from: string }>;
+}
+
+export declare interface ILayoutComponentSerialized<T> extends ILayoutComponent {
+    __data?: T;
+    slots?: Index<ILayoutComponentSerialized<T>[]>;
 }
