@@ -236,14 +236,14 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                 {content}
             </SortableContext>
             
-            {!hasItems && (
+            {!hasItems && selectedId === parentId && (
                 <div>
                     Drop {displayName} components here
                 </div>
             )}
 
             {/* Filler Drop Target for non-empty lists */}
-            {hasItems && (
+            {hasItems && selectedId === parentId && (
                 <div 
                     ref={setNodeRef}
                     style={{
@@ -256,7 +256,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                         padding: '20px',
                         border: '1px dashed #ccc',
                         textAlign: 'center',
-                        zIndex: 999,
+                        zIndex: 9999,
                     }}
                 >
                     Drop {displayName} components here

@@ -90,7 +90,7 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                     )}
                 </Collapse>
             </Col>}
-            <Col span={isEditing?.isset ? 14 : 24} style={{ position: 'relative' }}>
+            <Col span={isEditing?.isset ? 14 : 24} style={{ position: 'relative' }} id="layout-editor-canvas">
                 <ConfigProvider theme={antTheme}>
                     {styleCss && <style>{styleCss}</style>}
                     <style>
