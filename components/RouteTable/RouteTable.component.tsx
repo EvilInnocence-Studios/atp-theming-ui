@@ -1,9 +1,8 @@
 import { overridable } from "@core/lib/overridable";
-import {RouteTableProps} from "./RouteTable.d";
-import styles from './RouteTable.module.scss';
 import { SlotRenderer } from "../SlotRenderer";
+import { RouteTableProps } from "./RouteTable.d";
 
-export const RouteTableComponent = overridable(({classes = styles, slots, __layoutId, className, css, activeRoute, routes, isEditing}:RouteTableProps) => {
+export const RouteTableComponent = overridable(({slots, __layoutId, className, css, activeRoute, routes, isEditing}:RouteTableProps) => {
     return <>
     {css && <style>{css}</style>}
     <div className={className}>

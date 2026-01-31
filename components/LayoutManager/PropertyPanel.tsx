@@ -4,10 +4,10 @@ import { overridable } from "@core/lib/overridable";
 import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
 import { useLayoutManager } from "@theming/lib/layout/context";
 import { findComponent } from "@theming/lib/layout/utils";
+import { Collapse } from "antd";
 import SVG from 'react-inlinesvg';
 import { ChildrenSelector } from "./ChildrenSelector.component";
 import styles from "./LayoutManager.module.scss";
-import { Card, Collapse } from "antd";
 
 export const PropertyPanel = overridable(() => {
     const { layout, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutManager();

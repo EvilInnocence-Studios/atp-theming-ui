@@ -1,4 +1,3 @@
-import { Editable } from "@core/components/Editable";
 import { onInputChange, onRadioChange } from "@core/lib/onInputChange";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +8,7 @@ import { IRouteTableInputProps } from "./RouteTable.d";
 
 export const RouteTablePropEditor = (
     {routes, __activeRoute}: IRouteTableInputProps,
-    updateProps: (props: any) => void,
+    _updateProps: (props: any) => void,
     updateProp: (prop: string) => (value: any) => void
 ) => {
     const addRoute = (route: string) => {

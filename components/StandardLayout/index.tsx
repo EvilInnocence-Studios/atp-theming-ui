@@ -3,8 +3,6 @@ import { ILayoutComponent } from "@theming/lib/layout/layout";
 import { Layout } from "antd";
 import { Index } from "ts-functional/dist/types";
 import styles from './StandardLayout.module.scss';
-import { useLocation } from "react-router";
-import { findMatchingRoute } from "@core/lib/routeUtils";
 
 export const StandardLayout = (
     { slots, __layoutId, css, className }: { slots?: Index<ILayoutComponent[]>, __layoutId?: string, css?: string, className?: string }
@@ -20,13 +18,3 @@ export const StandardLayout = (
         </Layout.Footer>
     </Layout>
 </>;
-
-export const RouteTable = ({slots, __layoutId, path}: {slots?: Index<ILayoutComponent[]>, __layoutId?: string, path?: string}) => {
-    const locationPath = useLocation().pathname;
-    const finalPath = path || locationPath;
-    const matchingRoute = findMatchingRoute(finalPath, slots);
-    
-    return <>
-        <SlotRenderer slots={matchingRoute} parentId={__layoutId} slotName="routeTable" />
-    </>
-}
