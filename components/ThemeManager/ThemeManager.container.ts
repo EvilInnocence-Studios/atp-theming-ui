@@ -59,28 +59,22 @@ const injectThemeManagerProps = createInjector(({}:IThemeManagerInputProps):IThe
     }
 
     const importTheme = async (file: File) => {
-        const text = await file.text();
-        const [theme, thumb] = await deserializeTheme(JSON.parse(text));
+        const [theme, thumbnail] = await deserializeTheme(file);
 
         if(!theme) {
             flash.error(`Failed to import theme`);
             return;
         }
 
-        // Convert the thumb Blob from base64 text to a File object
-        let thumbFile:File | null = null;
-        if(thumb && theme.imageUrl) {
-            const blob = await thumb.arrayBuffer();
-            thumbFile = new File([blob], theme.imageUrl);
+        const newTheme = await services().theme.create(theme);
+        console.log(newTheme);
+        console.log(thumbnail);
+        if(thumbnail) {
+            console.log("Uploading thumbnail");
+            await services().theme.image.upload(newTheme.id, thumbnail);
         }
-
-        services().theme.create(theme).then((theme) => {
-            if (thumbFile) {
-                services().theme.image.upload(theme.id, thumbFile).catch(flash.error(`Failed to import theme image`));
-            }
-            flash.success(`Theme imported successfully`);
-            refresh();
-        }).catch(flash.error(`Failed to import theme`));
+        flash.success(`Theme ${newTheme.name} imported successfully`)();
+        refresh();
     }
     
     return {create, themes, isLoading: loader.isLoading, refresh, defaultThemeId, setDefaultTheme, importTheme};

@@ -7,11 +7,15 @@ export const themeServices = memoize(({ get, post, patch, remove }: IMethods) =>
     theme: {
         search: (): Promise<ITheme[]> => get(`theme`).then(getResults),
         get: (id: string): Promise<ITheme> => get(`theme/${id}`).then(getResults),
-        create: (theme: NewTheme): Promise<ITheme> => post(`theme`, theme),
+        create: (theme: NewTheme): Promise<ITheme> => post(`theme`, theme).then(getResults),
         update: (id: string, value: Partial<ITheme>): Promise<ITheme> => patch(`theme/${id}`, value),
         remove: (id: string) => remove(`theme/${id}`),
         image: {
-            upload: (id: string, file: File): Promise<string> => post(`theme/${id}/image`, file),
+            upload: (id: string, file: File): Promise<string> => {
+                const formData = new FormData();
+                formData.append('file', file);
+                return patch(`theme/${id}/image`, formData);
+            },
             remove: (id: string) => remove(`theme/${id}/image`),
         }
     },

@@ -27,12 +27,11 @@ const injectThemeListItemProps = createInjector(({theme, refresh}:IThemeListItem
         .catch(() => {flash.error(`Failed to remove theme`)});
 
     const exportTheme = async () => {
-        const serializedTheme = await serializeTheme(theme);
-        const blob = new Blob([JSON.stringify(serializedTheme, null, 2)], {type: "application/json"});
+        const blob = await serializeTheme(theme);
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${theme.name}.json`;
+        a.download = `${theme.name}.zip`;
         a.click();
         URL.revokeObjectURL(url);
     }

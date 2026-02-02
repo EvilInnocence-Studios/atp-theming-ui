@@ -29,9 +29,8 @@ export const ThemeListItemComponent = overridable(({
             <Switch checkedChildren="Enabled" unCheckedChildren="Disabled" checked={theme.enabled} onChange={updateToggle("enabled")} />
             <DeleteBtn entityType="theme" onClick={remove} />
         </Space>
-        {theme.imageUrl && <S3Image folderSetting="themeThumbnailFolder" fileName={theme.imageUrl} />}
         <Upload.Dragger className={classes.upload} customRequest={({ file }) => upload(file as File)} showUploadList={false}>
-            <FontAwesomeIcon icon={faUpload} /> Upload Thumbnail
+            {theme.imageUrl ? <S3Image folderSetting="themeThumbnailFolder" fileName={theme.imageUrl} /> : <><FontAwesomeIcon icon={faUpload} /> Upload Thumbnail</>}
         </Upload.Dragger>
         <Button type="primary" size="large">
             <Link to={`/theme/${theme.id}`}>

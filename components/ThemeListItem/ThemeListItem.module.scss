@@ -21,4 +21,12 @@
         margin-top: var(--padding);
         width: 100%;
     }
+    img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    :global(.ant-upload) {
+        padding: 0 !important;
+    }
 }

@@ -20,8 +20,8 @@ export declare interface IComponentMetadata<T = undefined> {
     propEditor?: (props: any, updateProps: (props: any) => void, updateProp: (prop: string ) => (value: any) => void) => React.ReactNode;
     layoutEditor?: LayoutEditor;
     getSlotDisplayName?: (slotName: string, props: any) => string;
-    serialize?: (cmp:ILayoutComponent) => Promise<ILayoutComponentSerialized<T>>;
-    deserialize?: (cmp:ILayoutComponentSerialized<T>) => Promise<ILayoutComponent>;
+    serialize?: (cmp:ILayoutComponent, context: { addFile: (name: string, blob: Blob) => void }) => Promise<ILayoutComponentSerialized<T>>;
+    deserialize?: (cmp:ILayoutComponentSerialized<T>, context: { getFile: (name: string) => Promise<Blob | null> }) => Promise<ILayoutComponent>;
 }
 
 export declare interface IComponentRegistration extends IComponentMetadata {
