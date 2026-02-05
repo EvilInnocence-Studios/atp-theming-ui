@@ -1,6 +1,5 @@
 import { DeleteBtn } from "@core/components/DeleteBtn";
 import { Editable } from "@core/components/Editable";
-import { Label } from "@core/components/Label";
 import { ResponsiveValue } from "@core/components/ResponsiveValue";
 import { faArrowsLeftRight, faArrowsUpDown, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
