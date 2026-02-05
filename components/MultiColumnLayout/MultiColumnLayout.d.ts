@@ -1,14 +1,15 @@
 import { ILayoutComponent } from "@theming/lib/layout/layout";
+import { Breakpoint } from "@theming/lib/useBreakpoint";
 import { ColProps, RowProps } from "antd";
 import { Index } from "ts-functional/dist/types";
 
 export declare interface IMultiColumnLayoutProps {
-
+    breakpoint: Breakpoint;
 }
 
 export declare interface IColProps extends ColProps {
     id: string;
-    className?: string;
+    className?: string | Index<string>;
     css?: string;
 }
 

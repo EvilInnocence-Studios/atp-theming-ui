@@ -206,12 +206,15 @@ export const MultiColumnLayoutPropEditor = (props: IMultiColumnLayoutInputProps,
                 >
                     <div style={{display: 'flex', flexDirection: 'column', gap: 10, padding: 10}}>
                         <div>
-                            <Label label="Class">
-                                <Editable
-                                    value={column.className || ''}
-                                    onChange={(value) => updateColumn(index, {...column, className: value})}
-                                />
-                            </Label>
+                            <ResponsiveValue
+                                label="Class Name"
+                                value={column.className}
+                                onChange={(value) => updateColumn(index, {...column, className: value})}
+                                editor={(value, onChange) => <Editable
+                                    value={value || ''}
+                                    onChange={onChange}
+                                />}
+                            />
                         </div>
                         <div>
                             <h4>Additional CSS Styling</h4>

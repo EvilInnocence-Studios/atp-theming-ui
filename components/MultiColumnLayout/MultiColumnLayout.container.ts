@@ -5,9 +5,12 @@ import icon from './icon.svg';
 import { MultiColumnLayoutComponent } from "./MultiColumnLayout.component";
 import { IMultiColumnLayoutInputProps, IMultiColumnLayoutProps, MultiColumnLayoutProps } from "./MultiColumnLayout.d";
 import { MultiColumnLayoutPropEditor } from "./MultiColumnLayout.props";
+import { useBreakpoint } from "@theming/lib/useBreakpoint";
 
 const injectMultiColumnLayoutProps = createInjector(({}:IMultiColumnLayoutInputProps):IMultiColumnLayoutProps => {
-    return {};
+    const breakpoint = useBreakpoint();
+    
+    return {breakpoint};
 });
 
 const connect = inject<IMultiColumnLayoutInputProps, MultiColumnLayoutProps>(mergeProps(
