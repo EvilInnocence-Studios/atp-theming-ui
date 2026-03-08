@@ -17,11 +17,11 @@ export declare interface IComponentMetadata<T = undefined> {
     displayName?: string;
     description?: string;
     isContainer?: boolean;
-    propEditor?: (props: any, updateProps: (props: any) => void, updateProp: (prop: string ) => (value: any) => void) => React.ReactNode;
+    propEditor?: (props: any, updateProps: (props: any) => void, updateProp: (prop: string) => (value: any) => void) => React.ReactNode;
     layoutEditor?: LayoutEditor;
     getSlotDisplayName?: (slotName: string, props: any) => string;
-    serialize?: (cmp:ILayoutComponent, context: { addFile: (name: string, blob: Blob) => void }) => Promise<ILayoutComponentSerialized<T>>;
-    deserialize?: (cmp:ILayoutComponentSerialized<T>, context: { getFile: (name: string) => Promise<Blob | null> }) => Promise<ILayoutComponent>;
+    serialize?: (cmp: ILayoutComponent, context: { addFile: (name: string, blob: Blob) => void }) => Promise<ILayoutComponentSerialized<T>>;
+    deserialize?: (cmp: ILayoutComponentSerialized<T>, context: { getFile: (name: string) => Promise<Blob | null> }) => Promise<ILayoutComponent>;
 }
 
 export declare interface IComponentRegistration extends IComponentMetadata {
@@ -75,16 +75,18 @@ export const ComponentRegistry = {
             .filter(({ displayName }) => displayName?.toLowerCase().includes(search.toLowerCase())),
 }
 
-const layouts:Index<{
+export declare interface ILayoutRegistration {
     name: string;
     displayName?: string;
     description?: string;
     defaultLayout: ILayoutComponent;
-}> = {};
+}
+
+const layouts: Index<ILayoutRegistration> = {};
 
 export const LayoutRegistry = {
-    register: ({name, displayName, description, defaultLayout}: {name: string, displayName?: string, description?: string, defaultLayout:ILayoutComponent}) => {
-        layouts[name] = {name, displayName, description, defaultLayout };
+    register: ({ name, displayName, description, defaultLayout }: ILayoutRegistration) => {
+        layouts[name] = { name, displayName, description, defaultLayout };
     },
     getDefault: (name: string): ILayoutComponent | undefined =>
         layouts[name]?.defaultLayout,
