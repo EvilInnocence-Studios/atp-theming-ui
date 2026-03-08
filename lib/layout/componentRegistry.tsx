@@ -75,28 +75,37 @@ export const ComponentRegistry = {
             .filter(({ displayName }) => displayName?.toLowerCase().includes(search.toLowerCase())),
 }
 
-export declare interface ILayoutRegistration {
+export declare interface ILayoutRegistration<Context = undefined> {
     name: string;
     displayName?: string;
     description?: string;
     defaultLayout: ILayoutComponent;
+    priority: number;
+    context?: {
+        name: string;
+        context: React.Context<Context>;
+    }
 }
 
-const layouts: Index<ILayoutRegistration> = {};
+const layouts: Index<ILayoutRegistration<any>> = {};
 
 export const LayoutRegistry = {
-    register: ({ name, displayName, description, defaultLayout }: ILayoutRegistration) => {
-        layouts[name] = { name, displayName, description, defaultLayout };
+    register: <Context extends undefined | any>(registration: ILayoutRegistration<Context>) => {
+        layouts[registration.name] = registration;
     },
+    get: <Context extends undefined | any>(name: string): ILayoutRegistration<Context> | undefined =>
+        layouts[name],
     getDefault: (name: string): ILayoutComponent | undefined =>
         layouts[name]?.defaultLayout,
     getNames: (): string[] =>
         Object.keys(layouts),
-    getOptions: () => Object.values(layouts).map(({ name, displayName, description }) => ({
-        value: name,
-        label: <>
-            <div><b>{displayName || name}</b></div>
-            <div><em>{description || ""}</em></div>
-        </>
-    })),
+    getOptions: () => Object.values(layouts)
+        .sort((a, b) => a.priority - b.priority)
+        .map(({ name, displayName, description }) => ({
+            value: name,
+            label: <>
+                <div><b>{displayName || name}</b></div>
+                <div><em>{description || ""}</em></div>
+            </>
+        })),
 }

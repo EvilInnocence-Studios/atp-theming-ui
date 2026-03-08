@@ -23,9 +23,21 @@ ComponentRegistry.register(Text);
 ComponentRegistry.register(RouteTable);
 ComponentRegistry.register(Style);
 
-LayoutRegistry.register({name: "layout", displayName: "Page Layout", description: "The site container (header, footer, etc.)", defaultLayout: {
-    component: "Content",
-}});
-LayoutRegistry.register({name: "homepage", displayName: "Homepage", description: "The homepage layout and design", defaultLayout: {
-    component: "Empty"
-}});
+LayoutRegistry.register({
+    name: "layout",
+    displayName: "Page Layout",
+    description: "The site container (header, footer, etc.)",
+    defaultLayout: {
+        component: "Content",
+    },
+    priority: 100,
+});
+LayoutRegistry.register({
+    name: "homepage",
+    displayName: "Homepage",
+    description: "The homepage layout and design",
+    defaultLayout: {
+        component: "Empty"
+    },
+    priority: 200,
+});
