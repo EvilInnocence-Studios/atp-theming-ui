@@ -115,6 +115,7 @@ export const SortableItem = ({
     const [isHovered, setIsHovered] = useState(false);
 
     const style = {
+        display: 'contents',
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.3 : 1,
