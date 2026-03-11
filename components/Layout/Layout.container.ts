@@ -13,7 +13,7 @@ const injectLayoutProps = createInjector(<Context>({ element }: ILayoutInputProp
     const defaultThemeId = useSetting("defaultThemeId");
 
     const registration = LayoutRegistry.get<Context>(element);
-    const Provider = registration?.context?.context.Provider;
+    const Provider = registration?.context?.Provider;
 
     useEffect(() => {
         if (!defaultThemeId) return;

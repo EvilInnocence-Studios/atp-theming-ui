@@ -8,6 +8,7 @@ export declare interface ITextInputProps {
     css?: string;
     markdown?: string;
     classes?: any;
+    inline?: boolean;
     slots?: Index<ILayoutComponent[]>;
     __layoutId?: string;
 }

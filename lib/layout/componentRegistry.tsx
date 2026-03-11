@@ -81,10 +81,7 @@ export declare interface ILayoutRegistration<Context = undefined> {
     description?: string;
     defaultLayout: ILayoutComponent;
     priority: number;
-    context?: {
-        name: string;
-        context: React.Context<Context>;
-    }
+    context?: React.Context<Context>;
 }
 
 const layouts: Index<ILayoutRegistration<any>> = {};
