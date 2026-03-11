@@ -12,15 +12,12 @@ const injectLayoutProps = createInjector(<Context>({ element }: ILayoutInputProp
     const [theme, setTheme] = useState<ITheme | null>(null);
     const defaultThemeId = useSetting("defaultThemeId");
 
-    const registration = LayoutRegistry.get<Context>(element);
-    const Provider = registration?.context?.Provider;
-
     useEffect(() => {
         if (!defaultThemeId) return;
         services().theme.get(defaultThemeId).then(setTheme);
     }, [defaultThemeId]);
 
-    return { component: theme && theme.json ? (theme.json as any)[element] || null : null, Provider };
+    return { component: theme && theme.json ? (theme.json as any)[element] || null : null };
 });
 
 const connect = inject<ILayoutInputProps<any>, LayoutProps<any>>(mergeProps(
