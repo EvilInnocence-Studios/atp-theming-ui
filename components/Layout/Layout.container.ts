@@ -2,7 +2,6 @@ import { ITheme } from "@common-shared/theme/types";
 import { useSetting } from "@common/lib/setting/services";
 import { services } from "@core/lib/api";
 import { overridable } from "@core/lib/overridable";
-import { LayoutRegistry } from "@theming/lib/layout/componentRegistry";
 import { useEffect, useState } from "react";
 import { createInjector, inject, mergeProps } from "unstateless";
 import { LayoutComponent } from "./Layout.component";
