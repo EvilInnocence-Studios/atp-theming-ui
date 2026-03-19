@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { CSS } from "@dnd-kit/utilities";
+import { useDndContext } from "@dnd-kit/core";
 import styles from "./SlotRenderer.module.scss";
 
 interface SlotItemOverlayProps {
@@ -33,6 +34,7 @@ export const SlotItemOverlay = ({
     transform,
     hovered
 }: SlotItemOverlayProps) => {
+    const { active } = useDndContext();
     const [rect, setRect] = useState<DOMRect | null>(null);
 
     useLayoutEffect(() => {
@@ -69,16 +71,29 @@ export const SlotItemOverlay = ({
                 const tx = transform ? transform.x : 0;
                 const ty = transform ? transform.y : 0;
 
-                setRect({
-                    top: (nodeRect.top - containerRect.top) - ty,
-                    left: (nodeRect.left - containerRect.left) - tx,
-                    width: nodeRect.width,
-                    height: nodeRect.height,
-                    bottom: 0, // unused
-                    right: 0, // unused
-                    x: (nodeRect.left - containerRect.left) - tx,
-                    y: (nodeRect.top - containerRect.top) - ty,
-                    toJSON: () => {}
+                setRect(prev => {
+                    const top = (nodeRect.top - containerRect.top) - ty + container.scrollTop;
+                    const left = (nodeRect.left - containerRect.left) - tx + container.scrollLeft;
+                    
+                    if (prev && 
+                        Math.abs(prev.top - top) < 0.5 && 
+                        Math.abs(prev.left - left) < 0.5 && 
+                        Math.abs(prev.width - nodeRect.width) < 0.5 && 
+                        Math.abs(prev.height - nodeRect.height) < 0.5) {
+                        return prev;
+                    }
+                    
+                    return {
+                        top,
+                        left,
+                        width: nodeRect.width,
+                        height: nodeRect.height,
+                        bottom: 0, 
+                        right: 0, 
+                        x: left, 
+                        y: top,
+                        toJSON: () => {}
+                    };
                 });
             }
         };
@@ -119,16 +134,20 @@ export const SlotItemOverlay = ({
 
         window.addEventListener('scroll', updateRect, true);
         window.addEventListener('resize', updateRect);
+        
+        // Fast polling to catch layout shifts from fonts, images, or async CSS
+        const interval = setInterval(updateRect, 1000);
 
         return () => {
             resizeObserver.disconnect();
             mutationObserver.disconnect();
+            clearInterval(interval);
             window.removeEventListener('scroll', updateRect, true);
             window.removeEventListener('resize', updateRect);
         };
-    }, [targetNode, transform]); 
+    }, [targetNode, transform]);  
 
-    if (!targetNode || !rect) return null; // Removed !selected check to allow hover rendering
+    if (!targetNode || !rect || active) return null; // Removed !selected check to allow hover rendering
 
     const portalContainer = document.getElementById('layout-editor-canvas');
     if (!portalContainer) return null;

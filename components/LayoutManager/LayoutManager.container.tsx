@@ -82,17 +82,19 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
             // If dropping palette item into a slot
             if (active.id.toString().startsWith('palette-')) {
                  const componentDef = active.data.current?.component;
-                 const { parentId, slotName } = over.data.current || {};
+                 const { parentId, slotName, index } = over.data.current || {};
                  if (componentDef && parentId && slotName) {
-                     handleAddComponent(parentId, slotName, { component: componentDef.name });
+                     handleAddComponent(parentId, slotName, { component: componentDef.name }, index);
                  }
             } else {
-                // Moving existing component
+                 // Moving existing component
                 const update = (prev: ILayoutComponent | null) => {
                     if (!prev) return null;
                     const movedId = active.id;
                     const component = findComponent(prev, movedId);
                     if (!component) return prev;
+
+                    const sourceInfo = findParent(prev, movedId);
 
                     // Remove from old location
                     const tempLayout = removeComponent(prev, movedId);
@@ -106,7 +108,17 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
                     if (over.data.current && over.data.current.parentId && over.data.current.slotName) {
                         targetParentId = over.data.current.parentId;
                         targetSlot = over.data.current.slotName;
-                        // Append to end
+                        targetIndex = over.data.current.index;
+
+                        if (
+                            sourceInfo &&
+                            targetIndex !== undefined &&
+                            sourceInfo.parent.id === targetParentId &&
+                            sourceInfo.slotName === targetSlot &&
+                            sourceInfo.index < targetIndex
+                        ) {
+                            targetIndex -= 1;
+                        }
                     } 
                     // Case 2: Dropped on another Component
                     else {

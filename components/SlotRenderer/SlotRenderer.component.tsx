@@ -8,8 +8,55 @@ import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useLayoutManager } from "@theming/lib/layout/context";
-import { useState } from "react";
+import React, { useState } from "react";
 import { SlotItemOverlay } from "./SlotItemOverlay";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from "antd";
+import { findComponent } from "@theming/lib/layout/utils";
+
+const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false }: { parentId: string, slotName: string, index: number, isEditing?: boolean }) => {
+    const { layout } = useLayoutManager();
+    const parentComponent = layout && layout.component ? findComponent(layout, parentId) : null;
+    const parentName = parentComponent ? (parentComponent.name || ComponentRegistry.get(parentComponent.component)?.displayName || parentComponent.component) : "Slot";
+
+    const { setNodeRef, isOver } = useDroppable({
+        id: `${parentId}:${slotName}:index:${index}`,
+        disabled: !isEditing,
+        data: {
+            parentId,
+            slotName,
+            index
+        }
+    });
+
+    return (
+        <Tooltip title={`${parentName} (${slotName})`} open={isOver} placement="right">
+            <div 
+                ref={setNodeRef}
+                style={{
+                    height: '24px',
+                    width: '100%',
+                    margin: '-12px 0',
+                    position: 'relative',
+                    zIndex: isOver ? 10 : 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    pointerEvents: 'none' // The hit testing is done by dnd-kit coordinates, we don't want it stealing mouse events otherwise
+                }}
+            >
+                <div style={{
+                    height: '4px',
+                    width: '100%',
+                    backgroundColor: isOver ? '#1890ff' : 'transparent',
+                    transition: 'background-color 0.2s',
+                    borderRadius: '2px',
+                }} />
+            </div>
+        </Tooltip>
+    );
+};
 
 export const SelectableItem = ({
     // id,
@@ -174,8 +221,8 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
         }
     });
 
-    const content = slots?.map((item) => {
-        const { component, props, slots, css, id, name } = item;
+    const content = slots?.map((item, index) => {
+        const { component, props, slots: childSlots, css, id, name } = item;
         const componentDef = ComponentRegistry.get(component);
         const layoutEditor = componentDef?.layoutEditor;
         const Component: React.ComponentType<any> | undefined = 
@@ -184,11 +231,11 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                                         undefined;
 
         const __update = (key:string) => (value:any) => {
-            updateComponent(id, {props: {...props, [key]: value }});
+            if (id) updateComponent(id, {props: {...props, [key]: value }});
         };
 
         const itemContent = Component ? (
-            <Component {...props} slots={slots} __layoutId={id} css={css} __update={__update} __isSelected={selectedId === id}/>
+            <Component {...props} slots={childSlots} __layoutId={id} css={css} __update={__update} __isSelected={selectedId === id}/>
         ) : null;
 
         if (isEditing?.isset && id) {
@@ -205,10 +252,10 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
             >
                 {itemContent}
             </SortableItem>;
-        }
+        } 
 
-        return itemContent;
-    });
+        return <React.Fragment key={id || index}>{itemContent}</React.Fragment>;
+    }) || [];
 
     const displayName = getDisplayName?.() || slotName;
 
@@ -217,12 +264,13 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
         return <div 
             className={`slot-renderer-${slotName}`}
             style={{ 
-                display: hasItems ? 'contents' : undefined,
+                display: hasItems ? 'flex' : undefined,
+                flexDirection: hasItems ? 'column' : undefined,
                 // If empty, behave like a block
-                minHeight: hasItems ? undefined : '50px',
+                minHeight: hasItems ? undefined : '40px',
                 backgroundColor: (isOver && !hasItems) ? 'rgba(0, 255, 0, 0.1)' : undefined,
                 border: (!hasItems && isEditing) ? '1px dashed #ccc' : undefined,
-                padding: (!hasItems) ? '20px' : undefined,
+                padding: (!hasItems) ? '10px' : undefined,
                 width: (!hasItems) ? '100%' : undefined,
                 textAlign: (!hasItems) ? 'center' : undefined,
             }}
@@ -234,33 +282,20 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
             }}
         >
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
-                {content}
+                {content.map((child, index) => (
+                    <React.Fragment key={`slot-item-${index}`}>
+                        <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} isEditing={isEditing?.isset} />
+                        {child}
+                    </React.Fragment>
+                ))}
+                {hasItems && parentId && slotName && (
+                    <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} isEditing={isEditing?.isset} />
+                )}
             </SortableContext>
             
-            {!hasItems && selectedId === parentId && (
+            {!hasItems && (
                 <div>
-                    Drop {displayName} components here
-                </div>
-            )}
-
-            {/* Filler Drop Target for non-empty lists */}
-            {hasItems && selectedId === parentId && (
-                <div 
-                    ref={setNodeRef}
-                    style={{
-                        flexGrow: 1,
-                        minWidth: '20px',
-                        minHeight: '20px',
-                        display: 'block', 
-                        backgroundColor: isOver ? 'rgba(0, 255, 0, 0.1)' : 'transparent',
-                        alignSelf: 'stretch',
-                        padding: '20px',
-                        border: '1px dashed #ccc',
-                        textAlign: 'center',
-                        zIndex: 9999,
-                    }}
-                >
-                    Drop {displayName} components here
+                    <FontAwesomeIcon icon={faSquarePlus} /> {displayName}
                 </div>
             )}
         </div>;
