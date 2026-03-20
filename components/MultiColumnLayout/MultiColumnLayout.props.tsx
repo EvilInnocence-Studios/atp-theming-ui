@@ -9,6 +9,41 @@ import { Gutter } from "antd/es/grid/row";
 import { objMap } from "ts-functional";
 import { Index } from "ts-functional/dist/types";
 import { IMultiColumnLayoutInputProps } from "./MultiColumnLayout";
+import React from "react";
+import { DndContext, PointerSensor, useSensor, DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+interface DraggableTabPaneProps extends React.HTMLAttributes<HTMLDivElement> {
+    'data-node-key': string;
+}
+
+const DraggableTabNode = ({ className, ...props }: DraggableTabPaneProps) => {
+    const { 'data-node-key': key } = props;
+    const { setNodeRef, transform, transition, isDragging, listeners, attributes } = useSortable({
+        id: key,
+    });
+
+    const style: React.CSSProperties = {
+        ...props.style,
+        transform: CSS.Transform.toString(transform && { ...transform, scaleX: 1 }),
+        transition,
+        ...(isDragging ? { position: 'relative', zIndex: 9999 } : {}),
+    };
+
+    return React.cloneElement(props.children as React.ReactElement, {
+        ref: setNodeRef,
+        style,
+        ...listeners,
+        ...attributes,
+    });
+};
+
 
 const parseGutter = (value: string | Object) => {
     if (typeof value === "object") {
@@ -128,6 +163,19 @@ export const MultiColumnLayoutPropEditor = (props: IMultiColumnLayoutInputProps,
          updateProps({...props, columns: newColumns});
     }
 
+    const sensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } });
+
+    const onDragEnd = ({ active, over }: DragEndEvent) => {
+        if (active.id !== over?.id && over?.id) {
+            const activeIndex = props.columns?.findIndex((i) => i.id === active.id) ?? -1;
+            const overIndex = props.columns?.findIndex((i) => i.id === over?.id) ?? -1;
+            if (activeIndex !== -1 && overIndex !== -1 && props.columns) {
+                const newColumns = arrayMove(props.columns, activeIndex, overIndex);
+                updateProps({ ...props, columns: newColumns });
+            }
+        }
+    };
+
     const gutter:[Gutter, Gutter] = (props.row?.gutter as [Gutter, Gutter]) || [undefined, undefined];
 
     return <>
@@ -191,19 +239,33 @@ export const MultiColumnLayoutPropEditor = (props: IMultiColumnLayoutInputProps,
             unCheckedChildren="No Wrap"
         />
         <h4>Columns</h4>
-        <Tabs
-            tabBarExtraContent={
-                <Button onClick={addColumn}>
-                    <FontAwesomeIcon icon={faPlus} />
-                </Button>
-            }
-        >
-            {props.columns?.map((column, index) => (
-                <Tabs.TabPane
-                    tab={<>Col {index+1} <DeleteBtn entityType="column" onClick={() => removeColumn(column.id)} /></>}
-                    key={index}
+        <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+            <SortableContext items={props.columns?.map((i) => i.id) || []} strategy={horizontalListSortingStrategy}>
+                <Tabs
+                    renderTabBar={(tabBarProps, DefaultTabBar) => (
+                        <DefaultTabBar {...tabBarProps}>
+                            {(node) => (
+                                <DraggableTabNode {...node.props} key={node.key}>
+                                    {node}
+                                </DraggableTabNode>
+                            )}
+                        </DefaultTabBar>
+                    )}
+                    tabBarExtraContent={
+                        <Button onClick={addColumn}>
+                            <FontAwesomeIcon icon={faPlus} />
+                        </Button>
+                    }
                 >
+                    {props.columns?.map((column, index) => (
+                        <Tabs.TabPane
+                            tab={<>{index+1}</>}
+                            key={column.id}
+                        >
                     <div style={{display: 'flex', flexDirection: 'column', gap: 10, padding: 10}}>
+                        <div style={{textAlign: "right"}}>
+                            <DeleteBtn label={`Remove Column ${index+1}`} entityType="column" onClick={() => removeColumn(column.id)} />
+                        </div>
                         <div>
                             <ResponsiveValue
                                 label="Class Name"
@@ -280,6 +342,8 @@ export const MultiColumnLayoutPropEditor = (props: IMultiColumnLayoutInputProps,
                     </div>
                 </Tabs.TabPane>
             ))  }
-        </Tabs>
+                </Tabs>
+            </SortableContext>
+        </DndContext>
     </>;
 }
