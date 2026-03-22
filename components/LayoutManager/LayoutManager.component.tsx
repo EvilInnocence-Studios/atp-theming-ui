@@ -43,7 +43,7 @@ import clsx from "clsx";
 
 // ... existing code ...
 
-export const LayoutManagerComponent = overridable(({theme, updater, element, setElement, layout, isEditing, showJson, selectedId, selectComponent, removeComponent, classes = styles, UpdateButtons}:LayoutManagerProps) => {
+export const LayoutManagerComponent = overridable(({theme, updater, element, setElement, layout, isEditing, showJson, selectedId, selectComponent, removeComponent, updateComponent, classes = styles, UpdateButtons}:LayoutManagerProps) => {
     const { setNodeRef, isOver } = useDroppable({
         id: 'root-layout',
         disabled: !!layout && !!layout.component,
@@ -106,7 +106,10 @@ export const LayoutManagerComponent = overridable(({theme, updater, element, set
                 )}
                 {layout && layout.component ? (() => {
                     const Component = ComponentRegistry.get(layout.component)?.component;
-                    const rootContent = Component ? <Component {...layout.props} slots={layout.slots} __layoutId={layout.id} /> : null;
+                    const __update = (key:string) => (value:any) => {
+                        if (layout.id) updateComponent(layout.id, {props: {...layout.props, [key]: value }});
+                    };
+                    const rootContent = Component ? <Component {...layout.props} slots={layout.slots} __layoutId={layout.id} css={layout.css} __update={__update} __isSelected={selectedId === layout.id} /> : null;
                     
                     if (rootContent) {
                         return (
