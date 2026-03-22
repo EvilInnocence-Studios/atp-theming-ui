@@ -1,17 +1,17 @@
+import { IMedia } from "@common-shared/media/types";
+import { useSetting } from "@common/lib/setting/services";
+import { services } from "@core/lib/api";
 import { overridable } from "@core/lib/overridable";
+import { useLoaderAsync } from "@core/lib/useLoader";
 import { withLayoutMetadata } from "@theming/lib/layout/componentRegistry";
+import { ILayoutComponent, ILayoutComponentSerialized } from "@theming/lib/layout/layout";
 import { useTheme } from "@theming/lib/useTheme";
+import { useEffect, useState } from "react";
 import { createInjector, inject, mergeProps } from "unstateless";
 import icon from './icon.svg';
 import { StyleComponent } from "./Style.component";
-import { IStyleInputProps, IStyleProps, StyleProps, IStyleFontInput, IStyleFont } from "./Style.d";
+import { IStyleFont, IStyleInputProps, IStyleProps, StyleProps } from "./Style.d";
 import { StylePropEditor } from "./Style.props";
-import { IMedia } from "@common-shared/media/types";
-import { services } from "@core/lib/api";
-import { useSetting } from "@common/lib/setting/services";
-import { useLoaderAsync } from "@core/lib/useLoader";
-import { useEffect, useState } from "react";
-import { ILayoutComponent, ILayoutComponentSerialized } from "@theming/lib/layout/layout";
 
 const injectStyleProps = createInjector(({vars, fonts}:IStyleInputProps):IStyleProps => {
     const theme = useTheme(vars || {});
