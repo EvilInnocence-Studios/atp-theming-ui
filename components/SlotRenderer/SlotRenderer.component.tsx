@@ -15,10 +15,15 @@ import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "antd";
 import { findComponent } from "@theming/lib/layout/utils";
 
-const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false }: { parentId: string, slotName: string, index: number, isEditing?: boolean }) => {
+const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false, isFirst = false, isLast = false }: { parentId: string, slotName: string, index: number, isEditing?: boolean, isFirst?: boolean, isLast?: boolean }) => {
     const { layout } = useLayoutManager();
     const parentComponent = layout && layout.component ? findComponent(layout, parentId) : null;
-    const parentName = parentComponent ? (parentComponent.name || ComponentRegistry.get(parentComponent.component)?.displayName || parentComponent.component) : "Slot";
+    const componentDef = parentComponent ? ComponentRegistry.get(parentComponent.component) : null;
+    const parentName = parentComponent ? (parentComponent.name || componentDef?.displayName || parentComponent.component) : "Slot";
+
+    const displaySlotName = componentDef?.getSlotDisplayName 
+        ? componentDef.getSlotDisplayName(slotName, parentComponent?.props || {})
+        : slotName;
 
     const { setNodeRef, isOver } = useDroppable({
         id: `${parentId}:${slotName}:index:${index}`,
@@ -30,28 +35,39 @@ const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false }: {
         }
     });
 
+    let margin = '-12px 0';
+    let indicatorPosition: React.CSSProperties = { top: '50%', marginTop: '-2px' };
+
+    if (isFirst) {
+        margin = '0 0 -24px 0';
+        indicatorPosition = { top: '-2px' };
+    } else if (isLast) {
+        margin = '-24px 0 0 0';
+        indicatorPosition = { bottom: '-2px' };
+    }
+
     return (
-        <Tooltip title={`${parentName} (${slotName})`} open={isOver} placement="right">
+        <Tooltip title={`Drop into ${parentName} (${displaySlotName})`} open={isOver} placement="right">
             <div 
                 ref={setNodeRef}
                 style={{
                     height: '24px',
                     width: '100%',
-                    margin: '-12px 0',
+                    margin,
                     position: 'relative',
                     zIndex: isOver ? 10 : 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     pointerEvents: 'none' // The hit testing is done by dnd-kit coordinates, we don't want it stealing mouse events otherwise
                 }}
             >
                 <div style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
                     height: '4px',
-                    width: '100%',
                     backgroundColor: isOver ? '#1890ff' : 'transparent',
                     transition: 'background-color 0.2s',
                     borderRadius: '2px',
+                    ...indicatorPosition
                 }} />
             </div>
         </Tooltip>
@@ -284,12 +300,12 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
                 {content.map((child, index) => (
                     <React.Fragment key={`slot-item-${index}`}>
-                        <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} isEditing={isEditing?.isset} />
+                        <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} isEditing={isEditing?.isset} isFirst={index === 0} />
                         {child}
                     </React.Fragment>
                 ))}
                 {hasItems && parentId && slotName && (
-                    <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} isEditing={isEditing?.isset} />
+                    <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} isEditing={isEditing?.isset} isLast />
                 )}
             </SortableContext>
             
