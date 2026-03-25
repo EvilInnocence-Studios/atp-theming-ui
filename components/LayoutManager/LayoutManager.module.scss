@@ -5,7 +5,25 @@
         margin: 0;
     }
     .header {
-        float: right;
+        text-align: right;
+        margin-bottom: 8px;
+    }
+    .rootDropTarget {
+        border: 2px dashed var(--borderColor, #ccc);
+        padding: 20px;
+        text-align: center;
+        background-color: transparent;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--textColorMuted, #999);
+        border-radius: var(--borderRadius, 4px);
+        transition: background-color 0.2s ease;
+
+        &.active {
+            background-color: rgba(0, 255, 0, 0.1);
+        }
     }
     .layoutElementSelect {
         height: 64px;
