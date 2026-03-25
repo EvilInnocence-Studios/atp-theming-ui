@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
 import { Collapse } from "antd";
 import SVG from 'react-inlinesvg';
-import styles from './LayoutManager.module.scss';
+import styles from './LayoutEditor/LayoutEditor.module.scss';
 import { overridable } from "@core/lib/overridable";
 
 const DraggablePaletteItem = ({ component, classes }: { component: any, classes: any }) => {

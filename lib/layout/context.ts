@@ -4,11 +4,7 @@ import { IToggle } from "@core/lib/useToggle";
 import { ITheme } from "@common-shared/theme/types";
 import { IUpdater } from "@core/lib/useUpdater";
 
-export interface ILayoutManagerContext {
-    theme: ITheme | null;
-    updater: IUpdater<ITheme> | null;
-    element: string | null;
-    setElement: (element: string) => void;
+export interface ILayoutEditorContext {
     layout: ILayoutComponent | null;
     isEditing: IToggle | null;
     showJson: IToggle | null;
@@ -17,14 +13,9 @@ export interface ILayoutManagerContext {
     addComponent: (parentId: string, slotName: string, component: ILayoutComponent, index?: number) => void;
     removeComponent: (id: string) => void;
     updateComponent: (id: string, updates: Partial<ILayoutComponent>) => void;
-    UpdateButtons: () => JSX.Element | null;
 }
 
-export const LayoutManagerContext = createContext<ILayoutManagerContext>({
-    theme: null,
-    updater: null,
-    element: null,
-    setElement: () => {},
+export const LayoutEditorContext = createContext<ILayoutEditorContext>({
     layout: null,
     isEditing: null,
     showJson: null,
@@ -33,6 +24,23 @@ export const LayoutManagerContext = createContext<ILayoutManagerContext>({
     addComponent: () => {},
     removeComponent: () => {},
     updateComponent: () => {},
+});
+
+export const useLayoutEditor = () => useContext(LayoutEditorContext);
+
+export interface ILayoutManagerContext {
+    theme: ITheme | null;
+    updater: IUpdater<ITheme> | null;
+    element: string | null;
+    setElement: (element: string) => void;
+    UpdateButtons: () => JSX.Element | null;
+}
+
+export const LayoutManagerContext = createContext<ILayoutManagerContext>({
+    theme: null,
+    updater: null,
+    element: null,
+    setElement: () => {},
     UpdateButtons: () => null,
 });
 

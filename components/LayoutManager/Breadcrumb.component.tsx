@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
 import { ILayoutComponent } from "@theming/lib/layout/layout";
 import SVG from 'react-inlinesvg';
-import styles from './LayoutManager.module.scss';
+import styles from './LayoutEditor/LayoutEditor.module.scss';
 
 interface BreadcrumbProps {
     path: ILayoutComponent[];

@@ -1,18 +1,15 @@
-import { DndContext, PointerSensor, pointerWithin, useSensor, useSensors } from "@dnd-kit/core";
-import { ILayoutComponent } from "@theming/lib/layout/layout";
-import { addComponent, ensureIds, removeComponent, updateComponent, findComponent, findParent } from "@theming/lib/layout/utils";
+import { ITheme } from "@common-shared/theme/types";
+import { services } from "@core/lib/api";
 import { overridable } from "@core/lib/overridable";
-import { useCallback, useState } from "react";
+import { useUpdater } from "@core/lib/useUpdater";
+import { ILayoutComponent } from "@theming/lib/layout/layout";
+import { ensureIds } from "@theming/lib/layout/utils";
+import { useState } from "react";
 import { createInjector, inject, mergeProps } from "unstateless";
 import { LayoutManagerComponent } from "./LayoutManager.component";
 import { ILayoutManagerInputProps, ILayoutManagerProps, LayoutManagerProps } from "./LayoutManager.d";
-import { LayoutManagerContext, useLayoutManager } from "@theming/lib/layout/context";
-import { ITheme } from "@common-shared/theme/types";
-import { services } from "@core/lib/api";
-import { useUpdater } from "@core/lib/useUpdater";
-import { useToggle } from "@core/lib/useToggle";
 
-export const LayoutManagerProvider = ({ children, themeId }: { children: React.ReactNode, themeId: string }) => {
+const injectLayoutManagerProps = createInjector(({ themeId }: ILayoutManagerInputProps): ILayoutManagerProps => {
     const [element, setElement] = useState<string>("layout");
     
     const updater = useUpdater<ITheme>(
@@ -23,162 +20,17 @@ export const LayoutManagerProvider = ({ children, themeId }: { children: React.R
         services().theme.update,
         "manual",
     );
-    const isEditing = useToggle(true);
-    const showJson = useToggle(false);
 
-    const theme = updater.history.entity.json;
-    const layout:ILayoutComponent | null = updater.history.entity.json?.[element]
-        ? ensureIds(updater.history.entity.json?.[element])
+    const theme = updater.history.entity;
+    const themeJson = theme?.json || {};
+    const layout:ILayoutComponent | null = themeJson?.[element]
+        ? ensureIds(themeJson?.[element])
         : null;
 
-    const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    const handleAddComponent = useCallback((parentId: string, slotName: string, component: ILayoutComponent, index?: number) => {
-        console.log('Adding component', {layout, parentId, slotName, component, index });
-        const componentWithId = ensureIds(component);
-        const newLayout = layout && layout.component ? addComponent(layout, parentId, slotName, componentWithId, index) : null;
-        console.log('New layout', newLayout);
-        updater.updateObject("json")({...theme, [element]: newLayout});
-        if (componentWithId.id) setSelectedId(componentWithId.id);
-    }, [layout]);
-
-    const handleRemoveComponent = useCallback((id: string) => {
-        const newLayout = layout && layout.component ? removeComponent(layout, id) : null;
-        updater.updateObject("json")({...theme, [element]: newLayout});
-        if (selectedId === id) setSelectedId(null);
-    }, [layout, selectedId]);
-
-    const handleUpdateComponent = useCallback((id: string, updates: Partial<ILayoutComponent>) => {
-        const newLayout = layout && layout.component ? updateComponent(layout, id, updates) : null;
-        updater.updateObject("json")({...theme, [element]: newLayout});
-    }, [layout]);
-
-    const handleDragEnd = useCallback((event: any) => {
-        const { active, over } = event;
-        console.log("Drag end event safe", { 
-            activeId: active?.id, 
-            overId: over?.id, 
-            activeData: active?.data?.current,
-            overData: over?.data?.current 
-        });
-
-        if (!over) {
-            console.log("Drag end: No over target");
-            return;
-        }
-
-        if (over.id === 'root-layout') {
-            console.log("Adding root component", active.data.current?.component);
-            const componentDef = active.data.current?.component;
-            if (componentDef) {
-                const newLayout = ensureIds({ component: componentDef.name });
-                updater.updateObject("json")({...theme, [element]: newLayout});
-                if (newLayout.id) setSelectedId(newLayout.id);
-            }
-            return;
-        }
-
-        if (active.id !== over.id) {
-            // If dropping palette item into a slot
-            if (active.id.toString().startsWith('palette-')) {
-                 const componentDef = active.data.current?.component;
-                 const { parentId, slotName, index } = over.data.current || {};
-                 if (componentDef && parentId && slotName) {
-                     handleAddComponent(parentId, slotName, { component: componentDef.name }, index);
-                 }
-            } else {
-                 // Moving existing component
-                const update = (prev: ILayoutComponent | null) => {
-                    if (!prev) return null;
-                    const movedId = active.id;
-                    const component = findComponent(prev, movedId);
-                    if (!component) return prev;
-
-                    const sourceInfo = findParent(prev, movedId);
-
-                    // Remove from old location
-                    const tempLayout = removeComponent(prev, movedId);
-                    if (!tempLayout) return prev;
-
-                    let targetParentId: string | undefined;
-                    let targetSlot: string | undefined;
-                    let targetIndex: number | undefined;
-
-                    // Case 1: Dropped on a Slot (container)
-                    if (over.data.current && over.data.current.parentId && over.data.current.slotName) {
-                        targetParentId = over.data.current.parentId;
-                        targetSlot = over.data.current.slotName;
-                        targetIndex = over.data.current.index;
-
-                        if (
-                            sourceInfo &&
-                            targetIndex !== undefined &&
-                            sourceInfo.parent.id === targetParentId &&
-                            sourceInfo.slotName === targetSlot &&
-                            sourceInfo.index < targetIndex
-                        ) {
-                            targetIndex -= 1;
-                        }
-                    } 
-                    // Case 2: Dropped on another Component
-                    else {
-                        // We need to find the parent of the 'over' item in the NEW layout (after removal)
-                        // to get the correct index.
-                        const parentInfo = findParent(tempLayout, over.id);
-                        if (parentInfo) {
-                            targetParentId = parentInfo.parent.id;
-                            targetSlot = parentInfo.slotName;
-                            targetIndex = parentInfo.index;
-                        }
-                    }
-
-                    if (targetParentId && targetSlot) {
-                        return addComponent(tempLayout, targetParentId, targetSlot, component, targetIndex);
-                    }
-
-                    return prev; // Fallback if target not found
-                };
-                
-                const newLayout = layout && layout.component ? update(layout) : null;
-                updater.updateObject("json")({...theme, [element]: newLayout});
-            }
-        }
-    }, [layout, handleAddComponent]);
-
-    const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 5,
-            },
-        })
-    );
-
-    return <LayoutManagerContext.Provider value={{
-        theme: updater.history.entity,
-        updater,
-        layout,
-        isEditing,
-        showJson,
-        element,
-        setElement,
-        selectedId,
-        selectComponent: (id: string | null) => {
-            console.log('Selecting component', id);
-            setSelectedId(id)
-        },
-        addComponent: handleAddComponent,
-        removeComponent: handleRemoveComponent,
-        updateComponent: handleUpdateComponent,
-        UpdateButtons: () => <updater.UpdateButtons />,
-    }}>
-        <DndContext onDragEnd={handleDragEnd} sensors={sensors} collisionDetection={pointerWithin}>
-            {children}
-        </DndContext>
-    </LayoutManagerContext.Provider>;
-};
-
-const injectLayoutManagerProps = createInjector(({ }: ILayoutManagerInputProps): ILayoutManagerProps => {
-    const {theme, updater, element, setElement, layout, isEditing, showJson, selectedId, selectComponent, addComponent, removeComponent, updateComponent, UpdateButtons } = useLayoutManager();
+    const onChange = (layout: ILayoutComponent | null) => {
+        updater.updateObject("json")({...themeJson, [element]: layout});
+    }
 
     return {
         theme,
@@ -186,14 +38,8 @@ const injectLayoutManagerProps = createInjector(({ }: ILayoutManagerInputProps):
         element,
         setElement,
         layout,
-        isEditing,
-        showJson,
-        selectedId,
-        selectComponent,
-        addComponent,
-        removeComponent,
-        updateComponent,
-        UpdateButtons,
+        onChange,
+        UpdateButtons: updater.UpdateButtons,
     };
 });
 
@@ -201,10 +47,4 @@ const connect = inject<ILayoutManagerInputProps, LayoutManagerProps>(mergeProps(
     injectLayoutManagerProps,
 ));
 
-const ConnectedLayoutManager = connect(LayoutManagerComponent);
-
-export const LayoutManager = overridable<LayoutManagerProps>((props) => 
-    <LayoutManagerProvider themeId={props.themeId}>
-        <ConnectedLayoutManager {...props} />
-    </LayoutManagerProvider>
-);
+export const LayoutManager = overridable<LayoutManagerProps>(connect(LayoutManagerComponent));

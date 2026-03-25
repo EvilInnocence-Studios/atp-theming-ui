@@ -7,16 +7,16 @@ import { DeleteBtn } from "@core/components/DeleteBtn";
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useLayoutManager } from "@theming/lib/layout/context";
+import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useLayoutEditor } from "@theming/lib/layout/context";
+import { findComponent } from "@theming/lib/layout/utils";
+import { Tooltip } from "antd";
 import React, { useState } from "react";
 import { SlotItemOverlay } from "./SlotItemOverlay";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
-import { Tooltip } from "antd";
-import { findComponent } from "@theming/lib/layout/utils";
 
 const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false, isFirst = false, isLast = false }: { parentId: string, slotName: string, index: number, isEditing?: boolean, isFirst?: boolean, isLast?: boolean }) => {
-    const { layout } = useLayoutManager();
+    const { layout } = useLayoutEditor();
     const parentComponent = layout && layout.component ? findComponent(layout, parentId) : null;
     const componentDef = parentComponent ? ComponentRegistry.get(parentComponent.component) : null;
     const parentName = parentComponent ? (parentComponent.name || componentDef?.displayName || parentComponent.component) : "Slot";
@@ -223,7 +223,7 @@ export const SortableItem = ({
 };
 
 export const SlotRendererComponent = overridable(({ slots, parentId, slotName, classes = styles, depth = 0, getDisplayName }: SlotRendererProps & { depth?: number }) => {
-    const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutManager();
+    const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutEditor();
 
     const droppableId = (parentId && slotName) ? `${parentId}:${slotName}` : undefined;
     const itemIds = slots?.map(s => (s as any).id).filter(Boolean) || [];

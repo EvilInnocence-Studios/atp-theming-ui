@@ -2,15 +2,15 @@ import { Editable } from "@core/components/Editable";
 import { Label } from "@core/components/Label";
 import { overridable } from "@core/lib/overridable";
 import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
-import { useLayoutManager } from "@theming/lib/layout/context";
+import { useLayoutEditor } from "@theming/lib/layout/context";
 import { findComponent } from "@theming/lib/layout/utils";
 import { Collapse } from "antd";
 import SVG from 'react-inlinesvg';
 import { ChildrenSelector } from "./ChildrenSelector.component";
-import styles from "./LayoutManager.module.scss";
+import styles from "./LayoutEditor/LayoutEditor.module.scss";
 
 export const PropertyPanel = overridable(() => {
-    const { layout, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutManager();
+    const { layout, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutEditor();
 
     const selectedComponent = layout && selectedId ? findComponent(layout, selectedId) : null;
     const componentDef = selectedComponent ? ComponentRegistry.get(selectedComponent.component) : null;
