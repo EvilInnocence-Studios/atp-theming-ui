@@ -22,6 +22,7 @@ export declare interface IMultiColumnLayoutInputProps {
     classes?: any;
     slots?: Index<ILayoutComponent[]>;
     __layoutId?: string;
+    name?: string;
 }
 
 export type MultiColumnLayoutProps = IMultiColumnLayoutInputProps & IMultiColumnLayoutProps;

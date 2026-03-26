@@ -47,6 +47,7 @@ export const PropertyPanel = overridable(() => {
         <h3 className={styles.paletteHeader}>
             {componentDef.icon && <SVG src={componentDef.icon} />}
             <b>{selectedComponent.name || componentDef.displayName || componentDef.name}</b> <em>Properties</em>
+            {!!selectedComponent.name && <><br/><small><em>{componentDef.displayName}</em></small></>}
         </h3>
         <div className={styles.cssPanel}>
             <Collapse accordion>

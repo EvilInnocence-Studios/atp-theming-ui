@@ -3,7 +3,7 @@ import {MultiColumnLayoutProps} from "./MultiColumnLayout.d";
 import { Col, Row } from "antd";
 import { SlotRenderer } from "../SlotRenderer";
 
-export const MultiColumnLayoutComponent = overridable(({row, columns, className, breakpoint, css, slots, __layoutId}:MultiColumnLayoutProps) => <>
+export const MultiColumnLayoutComponent = overridable(({row, columns, className, breakpoint, css, slots, __layoutId, name}:MultiColumnLayoutProps) => <>
     {css && <style>{css}</style>}
     
     <Row className={className} {...row}>
@@ -20,6 +20,7 @@ export const MultiColumnLayoutComponent = overridable(({row, columns, className,
                     slots={slots?.[`column-${column.id}`]}
                     parentId={__layoutId}
                     slotName={`column-${column.id}`}
+                    componentName={name}
                     getDisplayName={() => `Column ${index+1}`}
                 />
             </Col>
