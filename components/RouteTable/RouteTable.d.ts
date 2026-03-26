@@ -14,6 +14,7 @@ export declare interface IRouteTableInputProps {
     __layoutId?: string;
     routes?: Index<string>; // id -> route(s), wildcard, comma-separated
     __activeRoute?: string;
+    name?: string;
 }
 
 export type RouteTableProps = IRouteTableInputProps & IRouteTableProps;

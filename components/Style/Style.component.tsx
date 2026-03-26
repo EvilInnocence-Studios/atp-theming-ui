@@ -4,7 +4,7 @@ import { IStyleVar, StyleProps } from "./Style.d";
 import { ConfigProvider } from "antd";
 import { SlotRenderer } from "../SlotRenderer";
 
-export const StyleComponent = overridable(({slots, css, vars, fonts, theme, __layoutId}:StyleProps) => <>
+export const StyleComponent = overridable(({slots, css, vars, fonts, theme, __layoutId, name}:StyleProps) => <>
     {css && <style>{css}</style>}
     <style>
         {fonts?.filter(f => f.url).map(f => `
@@ -27,6 +27,7 @@ export const StyleComponent = overridable(({slots, css, vars, fonts, theme, __la
                 slots={slots?.[`children`]} 
                 parentId={__layoutId}
                 slotName="children"
+                componentName={name}
                 getDisplayName={() => "Children"}
             />
         </ConfigProvider>

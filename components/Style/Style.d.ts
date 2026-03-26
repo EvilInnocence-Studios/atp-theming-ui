@@ -30,6 +30,7 @@ export declare interface IStyleInputProps {
     classes?: any;
     slots?: Index<ILayoutComponent[]>;
     __layoutId?: string;
+    name?: string;
     vars?: Index<IStyleVar>;
     fonts?: Index<IStyleFontInput>;
 }

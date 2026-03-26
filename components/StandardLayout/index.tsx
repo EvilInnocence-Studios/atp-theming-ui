@@ -5,16 +5,16 @@ import { Index } from "ts-functional/dist/types";
 import styles from './StandardLayout.module.scss';
 
 export const StandardLayout = (
-    { slots, __layoutId, css, className }: { slots?: Index<ILayoutComponent[]>, __layoutId?: string, css?: string, className?: string }
+    { slots, __layoutId, css, className, name }: { slots?: Index<ILayoutComponent[]>, __layoutId?: string, css?: string, className?: string, name?: string }
 ) => <>
     {css && <style>{css}</style>}
     <Layout style={{ height: '100%' }} className={className}>
-        <SlotRenderer slots={slots?.header} parentId={__layoutId} slotName="header" />
+        <SlotRenderer slots={slots?.header} parentId={__layoutId} slotName="header" componentName={name} />
         <Layout.Content className={styles.content}>
-            <SlotRenderer slots={slots?.content} parentId={__layoutId} slotName="content" />
+            <SlotRenderer slots={slots?.content} parentId={__layoutId} slotName="content" componentName={name} />
         </Layout.Content>
         <Layout.Footer style={{ position: "relative" }}>
-            <SlotRenderer slots={slots?.footer} parentId={__layoutId} slotName="footer" />
+            <SlotRenderer slots={slots?.footer} parentId={__layoutId} slotName="footer" componentName={name} />
         </Layout.Footer>
     </Layout>
 </>;

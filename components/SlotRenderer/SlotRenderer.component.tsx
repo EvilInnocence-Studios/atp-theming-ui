@@ -222,8 +222,14 @@ export const SortableItem = ({
     );
 };
 
-export const SlotRendererComponent = overridable(({ slots, parentId, slotName, classes = styles, depth = 0, getDisplayName }: SlotRendererProps & { depth?: number }) => {
+export const SlotRendererComponent = overridable(({
+    slots, parentId, slotName, classes = styles, depth = 0, getDisplayName, componentName,
+}: SlotRendererProps & { depth?: number }) => {
     const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutEditor();
+
+    const componentDef = ComponentRegistry.get(componentName || "");
+    const componentDisplayName = componentDef?.displayName || componentName;
+    console.log(componentDef, componentName, componentDisplayName);
 
     const droppableId = (parentId && slotName) ? `${parentId}:${slotName}` : undefined;
     const itemIds = slots?.map(s => (s as any).id).filter(Boolean) || [];
@@ -246,12 +252,14 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
             !!component               ? componentDef?.component :
                                         undefined;
 
+        const componentDisplayName = name || componentDef?.displayName || component;
+
         const __update = (key:string) => (value:any) => {
             if (id) updateComponent(id, {props: {...props, [key]: value }});
         };
 
         const itemContent = Component ? (
-            <Component {...props} slots={childSlots} __layoutId={id} css={css} __update={__update} __isSelected={selectedId === id}/>
+            <Component name={componentDisplayName}{...props} slots={childSlots} __layoutId={id} css={css} __update={__update} __isSelected={selectedId === id}/>
         ) : null;
 
         if (isEditing?.isset && id) {
@@ -260,7 +268,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
                 id={id} 
                 selected={selectedId === id}
                 className={classes.item}
-                title={name || componentDef?.displayName || component}
+                title={componentDisplayName}
                 onSelect={() => selectComponent(id)}
                 onDelete={() => removeComponent(id)}
                 isContainer={componentDef?.isContainer}
@@ -311,7 +319,7 @@ export const SlotRendererComponent = overridable(({ slots, parentId, slotName, c
             
             {!hasItems && (
                 <div>
-                    <FontAwesomeIcon icon={faSquarePlus} /> {displayName}
+                    <FontAwesomeIcon icon={faSquarePlus} /> {componentDisplayName} {displayName}
                 </div>
             )}
         </div>;

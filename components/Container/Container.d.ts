@@ -9,6 +9,7 @@ export declare interface IContainerInputProps {
     classes?: any;
     slots?: Index<ILayoutComponent[]>;
     __layoutId?: string;
+    name?: string;
 }
 
 export type ContainerProps = IContainerInputProps & IContainerProps;
