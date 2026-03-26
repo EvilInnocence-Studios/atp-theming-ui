@@ -35,14 +35,14 @@ const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false, isF
         }
     });
 
-    let margin = '-12px 0';
+    let margin = '-6px 0';
     let indicatorPosition: React.CSSProperties = { top: '50%', marginTop: '-2px' };
 
     if (isFirst) {
-        margin = '0 0 -24px 0';
+        margin = '0 0 -12px 0';
         indicatorPosition = { top: '-2px' };
     } else if (isLast) {
-        margin = '-24px 0 0 0';
+        margin = '-12px 0 0 0';
         indicatorPosition = { bottom: '-2px' };
     }
 
@@ -51,7 +51,7 @@ const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false, isF
             <div 
                 ref={setNodeRef}
                 style={{
-                    height: '24px',
+                    height: '12px',
                     width: '100%',
                     margin,
                     position: 'relative',
