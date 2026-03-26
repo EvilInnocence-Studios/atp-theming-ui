@@ -5,7 +5,6 @@ import { ConfigProvider } from "antd";
 import { SlotRenderer } from "../SlotRenderer";
 
 export const StyleComponent = overridable(({slots, css, vars, fonts, theme, __layoutId}:StyleProps) => <>
-    {css && <style>{css}</style>}
     <style>
         {fonts?.filter(f => f.url).map(f => `
             @font-face {
@@ -19,6 +18,7 @@ export const StyleComponent = overridable(({slots, css, vars, fonts, theme, __la
         #rootLayout {"{"}
             {Object.values(objMap<IStyleVar, string>(v => `--${v.name}: ${v.value};`)(vars || {})).join("\n")}
         {"}"}
+        {css}
     </style>
 
     <div id="rootLayout" style={{display: "contents"}}>
