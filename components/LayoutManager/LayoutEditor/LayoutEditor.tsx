@@ -11,7 +11,7 @@ import { addComponent, ensureIds, findComponent, findParent, getAncestryPath, re
 import { useTheme } from "@theming/lib/useTheme";
 import { Col, ConfigProvider, Row, Switch } from "antd";
 import clsx from "clsx";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { objMap } from "ts-functional";
 import { Breadcrumb } from "../Breadcrumb.component";
 import { ComponentLibrary } from "../ComponentLibrary.component";
@@ -181,6 +181,17 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
         disabled: !!layout && !!layout.component,
     });
 
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
+                e.preventDefault();
+                isEditing?.toggle();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isEditing]);
+
     const styleLayout = theme && theme.json ? Object.values(theme.json).find((c:any) => c.component === "Style") as ILayoutComponent : null;
     const styleVars = styleLayout?.props?.vars;
     const styleCss = styleLayout?.props?.css;
@@ -195,6 +206,7 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
             <Col span={isEditing?.isset ? 14 : 24} style={{ position: 'relative' }} id="layout-editor-canvas">
                 <div className={classes.header}>
                     <Switch checked={isEditing?.isset} onChange={isEditing?.toggle} checkedChildren="Edit" unCheckedChildren="Preview"/>
+                    <span style={{ marginLeft: 8, fontSize: '0.8em', color: '#888' }}>(Ctrl+E)</span>
                 </div>
                 <ConfigProvider theme={antTheme}>
                     {styleCss && <style>{styleCss}</style>}
