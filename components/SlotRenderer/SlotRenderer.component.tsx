@@ -12,10 +12,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LayoutFixedContext, useLayoutEditor, useLayoutFixed } from "@theming/lib/layout/context";
 import { findComponent } from "@theming/lib/layout/utils";
 import { Tooltip } from "antd";
-import React, { useState } from "react";
+import React, { useState, createContext, useContext } from "react";
+
+export const DepthContext = createContext<number>(0);
+export const useDepth = () => useContext(DepthContext);
 import { SlotItemOverlay } from "./SlotItemOverlay";
 
-const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false, isFirst = false, isLast = false }: { parentId: string, slotName: string, index: number, isEditing?: boolean, isFirst?: boolean, isLast?: boolean }) => {
+const DropTargetIndicator = ({ parentId, slotName, index, depth = 0, isEditing = false, isFirst = false, isLast = false }: { parentId: string, slotName: string, index: number, depth?: number, isEditing?: boolean, isFirst?: boolean, isLast?: boolean }) => {
     const { layout } = useLayoutEditor();
     const parentComponent = layout && layout.component ? findComponent(layout, parentId) : null;
     const componentDef = parentComponent ? ComponentRegistry.get(parentComponent.component) : null;
@@ -35,25 +38,31 @@ const DropTargetIndicator = ({ parentId, slotName, index, isEditing = false, isF
         }
     });
 
-    let margin = '-6px 0';
+    const offset = depth * 4;
+    let marginTop = '-6px';
+    let marginBottom = '0';
     let indicatorPosition: React.CSSProperties = { top: '50%', marginTop: '-2px' };
 
     if (isFirst) {
-        margin = '0 0 -12px 0';
-        indicatorPosition = { top: '-2px' };
+        marginTop = `${offset}px`;
+        marginBottom = `-${12 + offset}px`;
+        indicatorPosition = { top: `-${2 + offset}px` };
     } else if (isLast) {
-        margin = '-12px 0 0 0';
-        indicatorPosition = { bottom: '-2px' };
+        marginTop = `-${12 + offset}px`;
+        marginBottom = `${offset}px`;
+        indicatorPosition = { bottom: `-${2 + offset}px` };
     }
 
     return (
         <Tooltip title={`Drop into ${parentName} (${displaySlotName})`} open={isOver} placement="right">
             <div 
                 ref={setNodeRef}
+                data-depth={depth}
                 style={{
                     height: '12px',
                     width: '100%',
-                    margin,
+                    marginTop,
+                    marginBottom,
                     position: 'relative',
                     zIndex: isOver ? 10 : 2,
                     pointerEvents: 'none' // The hit testing is done by dnd-kit coordinates, we don't want it stealing mouse events otherwise
@@ -223,8 +232,10 @@ export const SortableItem = ({
 };
 
 export const SlotRendererComponent = overridable(({
-    slots, parentId, slotName, classes = styles, depth = 0, getDisplayName, componentName, __fixed
+    slots, parentId, slotName, classes = styles, depth: propDepth, getDisplayName, componentName, __fixed
 }: SlotRendererProps & { depth?: number }) => {
+    const contextDepth = useDepth();
+    const depth = propDepth !== undefined ? propDepth : contextDepth;
     const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutEditor();
 
     const isFixedContext = useLayoutFixed();
@@ -261,6 +272,7 @@ export const SlotRendererComponent = overridable(({
         };
 
         const itemContent = Component ? (
+            <DepthContext.Provider value={depth + 1}>
             <Component
                 __fixed={isFixed}
                 name={componentDisplayName}
@@ -271,6 +283,7 @@ export const SlotRendererComponent = overridable(({
                 __update={__update}
                 __isSelected={selectedId === id
             }/>
+            </DepthContext.Provider>
         ) : null;
 
         if (isEditing?.isset && !isFixed && id) {
@@ -319,12 +332,12 @@ export const SlotRendererComponent = overridable(({
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
                 {content.map((child, index) => (
                     <React.Fragment key={`slot-item-${index}`}>
-                        {!isFixed && <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} isEditing={isEditing?.isset} isFirst={index === 0} />}
+                        {!isFixed && <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} depth={depth} isEditing={isEditing?.isset} isFirst={index === 0} />}
                         {child}
                     </React.Fragment>
                 ))}
                 {hasItems && parentId && slotName && !isFixed && (
-                    <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} isEditing={isEditing?.isset} isLast />
+                    <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} depth={depth} isEditing={isEditing?.isset} isLast />
                 )}
             </SortableContext>
             
