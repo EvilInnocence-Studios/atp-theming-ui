@@ -8,6 +8,7 @@ export declare interface ILayoutProps<Context = undefined> {
 export declare interface ILayoutInputProps<Context = undefined> {
     element: string;
     classes?: any;
+    __fixed?: boolean;
 }
 
 export type LayoutProps<Context = undefined> = ILayoutInputProps<Context> & ILayoutProps<Context>;

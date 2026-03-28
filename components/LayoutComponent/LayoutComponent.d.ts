@@ -12,6 +12,7 @@ export declare interface ILayoutComponentInputProps extends ILayoutComponent {
     slots?: Index<ILayoutComponent>;
     classes?: any;
     css?: string;
+    __fixed?: boolean;
 }
 
 export type LayoutComponentProps = ILayoutComponentInputProps & ILayoutComponentProps;

@@ -192,7 +192,16 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
             {isEditing?.isset && <Col span={4}>
                 <ComponentLibrary classes={classes} />
             </Col>}
-            <Col span={isEditing?.isset ? 14 : 24} style={{ position: 'relative' }} id="layout-editor-canvas">
+            <Col 
+                span={isEditing?.isset ? 14 : 24} 
+                style={{ position: 'relative' }} 
+                id="layout-editor-canvas"
+                onClickCapture={(e) => {
+                    if (isEditing?.isset && (e.target as HTMLElement).closest('a')) {
+                        e.preventDefault();
+                    }
+                }}
+            >
                 <div className={classes.header}>
                     <Switch checked={isEditing?.isset} onChange={isEditing?.toggle} checkedChildren="Edit" unCheckedChildren="Preview"/>
                 </div>

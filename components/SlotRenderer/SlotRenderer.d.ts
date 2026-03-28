@@ -13,6 +13,7 @@ export declare interface ISlotRendererInputProps {
     getDisplayName?: () => string;
     componentName?: string;
     depth?: number;
+    __fixed?: boolean;
 }
 
 export type SlotRendererProps = ISlotRendererInputProps & ISlotRendererProps;

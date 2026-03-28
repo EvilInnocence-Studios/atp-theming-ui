@@ -15,6 +15,9 @@ export interface ILayoutEditorContext {
     updateComponent: (id: string, updates: Partial<ILayoutComponent>) => void;
 }
 
+export const LayoutFixedContext = createContext<boolean>(false);
+export const useLayoutFixed = () => useContext(LayoutFixedContext);
+
 export const LayoutEditorContext = createContext<ILayoutEditorContext>({
     layout: null,
     isEditing: null,

@@ -9,7 +9,7 @@ import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-
 import { CSS } from "@dnd-kit/utilities";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLayoutEditor } from "@theming/lib/layout/context";
+import { LayoutFixedContext, useLayoutEditor, useLayoutFixed } from "@theming/lib/layout/context";
 import { findComponent } from "@theming/lib/layout/utils";
 import { Tooltip } from "antd";
 import React, { useState } from "react";
@@ -223,13 +223,15 @@ export const SortableItem = ({
 };
 
 export const SlotRendererComponent = overridable(({
-    slots, parentId, slotName, classes = styles, depth = 0, getDisplayName, componentName,
+    slots, parentId, slotName, classes = styles, depth = 0, getDisplayName, componentName, __fixed
 }: SlotRendererProps & { depth?: number }) => {
     const { isEditing, selectedId, updateComponent, selectComponent, removeComponent } = useLayoutEditor();
 
+    const isFixedContext = useLayoutFixed();
+    const isFixed = __fixed || isFixedContext;
+
     const componentDef = ComponentRegistry.get(componentName || "");
     const componentDisplayName = componentDef?.displayName || componentName;
-    console.log(componentDef, componentName, componentDisplayName);
 
     const droppableId = (parentId && slotName) ? `${parentId}:${slotName}` : undefined;
     const itemIds = slots?.map(s => (s as any).id).filter(Boolean) || [];
@@ -259,10 +261,19 @@ export const SlotRendererComponent = overridable(({
         };
 
         const itemContent = Component ? (
-            <Component name={componentDisplayName}{...props} slots={childSlots} __layoutId={id} css={css} __update={__update} __isSelected={selectedId === id}/>
+            <Component
+                __fixed={isFixed}
+                name={componentDisplayName}
+                {...props}
+                slots={childSlots}
+                __layoutId={id}
+                css={css}
+                __update={__update}
+                __isSelected={selectedId === id
+            }/>
         ) : null;
 
-        if (isEditing?.isset && id) {
+        if (isEditing?.isset && !isFixed && id) {
             return <SortableItem 
                 key={id} 
                 id={id} 
@@ -283,9 +294,9 @@ export const SlotRendererComponent = overridable(({
 
     const displayName = getDisplayName?.() || slotName;
 
-    if (isEditing?.isset && droppableId) {
+    if (isEditing?.isset && !isFixed && droppableId) {
         const hasItems = slots && slots.length > 0;
-        return <div 
+        const result = <div 
             className={`slot-renderer-${slotName}`}
             style={{ 
                 display: hasItems ? 'flex' : undefined,
@@ -308,22 +319,24 @@ export const SlotRendererComponent = overridable(({
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
                 {content.map((child, index) => (
                     <React.Fragment key={`slot-item-${index}`}>
-                        <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} isEditing={isEditing?.isset} isFirst={index === 0} />
+                        {!isFixed && <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} isEditing={isEditing?.isset} isFirst={index === 0} />}
                         {child}
                     </React.Fragment>
                 ))}
-                {hasItems && parentId && slotName && (
+                {hasItems && parentId && slotName && !isFixed && (
                     <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} isEditing={isEditing?.isset} isLast />
                 )}
             </SortableContext>
             
-            {!hasItems && (
+            {!hasItems && !isFixed && (
                 <div>
                     <FontAwesomeIcon icon={faSquarePlus} /> {componentDisplayName} {displayName}
                 </div>
             )}
         </div>;
+
+        return <LayoutFixedContext.Provider value={isFixed}>{result}</LayoutFixedContext.Provider>;
     }
 
-    return <>{content}</>;
+    return <LayoutFixedContext.Provider value={isFixed}><>{content}</></LayoutFixedContext.Provider>;
 });
