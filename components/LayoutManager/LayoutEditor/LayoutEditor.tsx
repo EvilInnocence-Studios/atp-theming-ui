@@ -200,11 +200,11 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
     return (
         <div className={classes.layoutEditor}>
             <Row gutter={[16,16]}>
-            {isEditing?.isset && <Col span={4}>
+            {isEditing?.isset && <Col span={5}>
                 <ComponentLibrary classes={classes} />
             </Col>}
             <Col 
-                span={isEditing?.isset ? 14 : 24} 
+                span={isEditing?.isset ? 13 : 24} 
                 style={{ position: 'relative' }} 
                 id="layout-editor-canvas"
                 onClickCapture={(e) => {

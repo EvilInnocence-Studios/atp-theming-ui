@@ -27,15 +27,17 @@
         flex-wrap: wrap;
         gap: 8px;
         .component {
-            flex: 1 1 31%;
-            max-width: 31%;
-            text-align: center;
+            flex: 1 1 48%;
+            max-width: 48%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             background-color: var(--bgLightColor);
             border: solid 4px var(--borderColor);
             border-radius: var(--borderRadius);
-            img {
-                display: block;
-                width: 100%;
+            svg {
+                width: 16px !important;
             }
         }
     }

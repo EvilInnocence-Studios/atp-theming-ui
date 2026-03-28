@@ -18,7 +18,7 @@ const DraggablePaletteItem = ({ component, classes }: { component: any, classes:
     return (
         <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={classes.component}>
             {component.icon && <SVG src={component.icon} />}
-            {component.displayName}
+            <span>{component.displayName}</span>
         </div>
     );
 };
@@ -31,7 +31,7 @@ export const ComponentLibraryComponent = overridable(({ classes = styles }: Comp
     return (
         <div className={classes.componentLibrary}>
             <h3 className={classes.paletteHeader}>Available Components</h3>
-            <Collapse accordion>
+            <Collapse accordion size="small">
                 {Array.from(ComponentRegistry.getCategories()).map((category) =>
                     <Collapse.Panel header={category} key={category}>
                         <div className={classes.componentList}>
