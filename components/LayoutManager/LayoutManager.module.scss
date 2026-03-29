@@ -11,5 +11,45 @@
     .layoutElementSelect {
         height: 64px;
         width: 100%;
+        > span {
+            width: 100%;
+            display: block;
+        }
+    }
+}
+
+.optionList {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.optionItem {
+    transition: all 0.2s;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 16px;
+    height: calc(100% - 32px);
+    cursor: pointer;
+    &:hover {
+        border-color: #4096ff;
+        background-color: rgba(0, 0, 0, 0.02);
+        :global(.dark-mode) & {
+            border-color: #1668dc;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+    }
+}
+.selectedOption {
+    border-color: #1677ff;
+    background-color: var(--bgColor);
+    &:hover {
+        border-color: #4096ff;
+    }
+    :global(.dark-mode) & {
+        border-color: #1668dc;
+        &:hover {
+            border-color: #1677ff;
+        }
     }
 }
