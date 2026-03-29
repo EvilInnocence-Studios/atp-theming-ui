@@ -13,6 +13,7 @@ export declare type LayoutEditor = React.FC<ILayoutEditorProps>;
 
 export declare interface IComponentMetadata<T = undefined> {
     category?: string;
+    subCategory?: string;
     icon?: string;
     displayName?: string;
     description?: string;

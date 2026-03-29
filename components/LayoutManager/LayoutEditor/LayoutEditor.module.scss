@@ -225,3 +225,17 @@
         }
     }
 }
+
+.wrappedTabs {
+    :global(.ant-tabs-nav-wrap) {
+        flex-wrap: wrap;
+    }
+    :global(.ant-tabs-nav-list) {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    :global(.ant-tabs-tab) {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+}
