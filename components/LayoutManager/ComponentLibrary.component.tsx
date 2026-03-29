@@ -96,7 +96,7 @@ export const ComponentLibraryComponent = overridable(({ classes = styles }: Comp
                     return (item.displayName || item.name).toLowerCase().includes(searchInput) || 
                            (item.description || '').toLowerCase().includes(searchInput);
                 }}
-                options={components.map(comp => ({
+                options={[...components].sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name)).map(comp => ({
                     value: comp.name,
                     label: <DraggableSelectOption 
                         key={`select-${comp.name}`} 
