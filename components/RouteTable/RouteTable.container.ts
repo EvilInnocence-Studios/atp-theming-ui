@@ -30,7 +30,8 @@ export const RouteTable = withLayoutMetadata(
     {
         name: "RouteTable",
         displayName: "RouteTable",
-        category: "Layouts",
+        category: "General",
+        subCategory: "Layouts",
         description: "",
         icon,
         propEditor: RouteTablePropEditor,

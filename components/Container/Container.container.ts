@@ -4,6 +4,7 @@ import {IContainerInputProps, ContainerProps, IContainerProps} from "./Container
 import { overridable } from "@core/lib/overridable";
 import { withLayoutMetadata } from "@theming/lib/layout/componentRegistry";
 import icon from './icon.svg';
+import { ContainerPropEditor } from "./Container.props";
 
 const injectContainerProps = createInjector(({}:IContainerInputProps):IContainerProps => {
     return {};
@@ -19,9 +20,11 @@ export const Container = withLayoutMetadata(
     {
         name: "Container",
         displayName: "Container",
-        category: "Layouts",
+        category: "General",
+        subCategory: "Layouts",
         description: "A basic container for separating content",
         icon,
         getSlotDisplayName: (slotName) => slotName === 'children' ? 'Children' : slotName,
+        propEditor: ContainerPropEditor,
     }
 );

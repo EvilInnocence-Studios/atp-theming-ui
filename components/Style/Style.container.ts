@@ -68,8 +68,9 @@ export const Style = withLayoutMetadata(
     overridable<IStyleInputProps>(connect(StyleComponent)),
     {
         name: "Style",
-        displayName: "Style",
-        category: "Misc",
+        displayName: "Global Styles",
+        category: "General",
+        subCategory: "Styling",
         description: "",
         icon,
         getSlotDisplayName: (slotName, props) => props[slotName] || slotName,
