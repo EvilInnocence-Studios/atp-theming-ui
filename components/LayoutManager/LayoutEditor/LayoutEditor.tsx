@@ -192,7 +192,7 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isEditing]);
 
-    const styleLayout = theme && theme.json ? Object.values(theme.json).find((c:any) => c.component === "Style") as ILayoutComponent : null;
+    const styleLayout = theme && theme.json ? Object.values(theme.json).find((c:any) => c?.component === "Style") as ILayoutComponent : null;
     const styleVars = styleLayout?.props?.vars;
     const styleCss = styleLayout?.props?.css;
     const antTheme = useTheme(styleVars || {});
