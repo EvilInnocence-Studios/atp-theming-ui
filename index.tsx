@@ -5,6 +5,7 @@ import { MultiColumnLayout } from "./components/MultiColumnLayout";
 import { RouteTable } from "./components/RouteTable";
 import { Style } from "./components/Style";
 import { Text } from "./components/Text";
+import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import { ComponentRegistry, LayoutRegistry } from "./lib/layout/componentRegistry";
 import { themingMenus } from "./lib/menus";
 import { themingRoutes } from "./lib/routes";
@@ -22,6 +23,7 @@ ComponentRegistry.register(Container);
 ComponentRegistry.register(Text);
 ComponentRegistry.register(RouteTable);
 ComponentRegistry.register(Style);
+ComponentRegistry.register(ThemeSwitcher);
 
 LayoutRegistry.register({
     name: "layout",
