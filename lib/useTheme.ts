@@ -1,6 +1,24 @@
+import { ITheme } from "@common-shared/theme/types";
+import { useSetting } from "@common/lib/setting/services";
 import { IStyleVar } from "@theming/components/Style/Style";
 import { ThemeConfig, theme as antTheme } from "antd";
 import { Index } from "ts-functional/dist/types";
+import { useSharedState } from "unstateless";
+import { useEffect } from "react";
+import { services } from "@core/lib/api";
+
+export const useLayoutTheme = () => {
+    const defaultThemeId = useSetting("defaultThemeId");
+    const [currentThemeId, setCurrentThemeId] = useSharedState<string>("currentThemeId", defaultThemeId)();
+    const [theme, setTheme] = useSharedState<ITheme | null>("currentThemeId", null)();
+
+    useEffect(() => {
+        if (!defaultThemeId) return;
+        services().theme.get(currentThemeId).then(setTheme);
+    }, [currentThemeId]);
+    
+    return { theme, onChange: setCurrentThemeId };
+}
 
 export const useTheme = (vars:Index<IStyleVar>) => {
     // Map var values to names
