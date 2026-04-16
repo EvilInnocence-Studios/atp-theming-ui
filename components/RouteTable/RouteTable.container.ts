@@ -29,9 +29,9 @@ export const RouteTable = withLayoutMetadata(
     overridable<IRouteTableInputProps>(connect(RouteTableComponent)),
     {
         name: "RouteTable",
-        displayName: "RouteTable",
-        category: "General",
-        subCategory: "Layouts",
+        displayName: "Route Table",
+        category: "Layout",
+        subCategory: "Routing",
         description: "",
         icon,
         propEditor: RouteTablePropEditor,

@@ -31,9 +31,9 @@ export const ThemeSwitcher = withLayoutMetadata(
     overridable<IThemeSwitcherInputProps>(connect(ThemeSwitcherComponent)),
     {
         name: "ThemeSwitcher",
-        displayName: "ThemeSwitcher",
-        category: "General",
-        subCategory: "Misc",
+        displayName: "Theme Switcher",
+        category: "Theme",
+        subCategory: "Display",
         description: "",
         icon,
         getSlotDisplayName: (slotName, props) => props[slotName] || slotName,

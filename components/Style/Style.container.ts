@@ -69,7 +69,7 @@ export const Style = withLayoutMetadata(
     {
         name: "Style",
         displayName: "Global Styles",
-        category: "General",
+        category: "Theme",
         subCategory: "Styling",
         description: "",
         icon,

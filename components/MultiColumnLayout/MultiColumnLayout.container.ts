@@ -23,8 +23,8 @@ export const MultiColumnLayout = withLayoutMetadata(
     {
         name: "MultiColumnLayout",
         displayName: "Multi Column Layout",
-        category: "General",
-        subCategory: "Layouts",
+        category: "Layout",
+        subCategory: "Structure",
         description: "A multi column layout",
         icon,
         propEditor: MultiColumnLayoutPropEditor,

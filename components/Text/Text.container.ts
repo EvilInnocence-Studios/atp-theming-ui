@@ -20,8 +20,8 @@ export const Text = withLayoutMetadata(
     {
         name: "Text",
         displayName: "Text",
-        category: "General",
-        subCategory: "Basic",
+        category: "Content",
+        subCategory: "Text",
         description: "A simple text component",
         icon,
         propEditor: TextPropEditor,

@@ -5,6 +5,8 @@ import { MultiColumnLayout } from "./components/MultiColumnLayout";
 import { RouteTable } from "./components/RouteTable";
 import { Style } from "./components/Style";
 import { Text } from "./components/Text";
+import { ThemeDescription } from "./components/ThemeDescription";
+import { ThemeName } from "./components/ThemeName";
 import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import { ComponentRegistry, LayoutRegistry } from "./lib/layout/componentRegistry";
 import { themingMenus } from "./lib/menus";
@@ -16,14 +18,16 @@ export const module: IModule = {
     routes: themingRoutes,
 };
 
-ComponentRegistry.register("StandardLayout", StandardLayout, { category: "Layouts", displayName: "Standard Layout" });
-ComponentRegistry.register("Empty", () => <div></div>, { category: "Layouts", displayName: "Empty" });
+ComponentRegistry.register("StandardLayout", StandardLayout, { category: "Layout", subCategory: "Structure", displayName: "Standard Layout" });
+ComponentRegistry.register("Empty", () => <div></div>, { category: "Layout", subCategory: "Structure", displayName: "Empty" });
 ComponentRegistry.register(MultiColumnLayout);
 ComponentRegistry.register(Container);
 ComponentRegistry.register(Text);
 ComponentRegistry.register(RouteTable);
 ComponentRegistry.register(Style);
 ComponentRegistry.register(ThemeSwitcher);
+ComponentRegistry.register(ThemeName);
+ComponentRegistry.register(ThemeDescription);
 
 LayoutRegistry.register({
     name: "layout",

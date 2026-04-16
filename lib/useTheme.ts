@@ -13,19 +13,6 @@ const getTheme = memoizePromise((id:string) => services().theme.get(id), {});
 const useCurrentId = useSharedState<string>("");
 const useCurrentTheme = useSharedState<ITheme | null>(null);
 
-// export const useLayoutTheme = () => {
-//     const defaultThemeId = useSetting("defaultThemeId");
-//     const [currentThemeId, setCurrentThemeId] = useCurrentId(defaultThemeId);
-//     const [theme, setTheme] = useCurrentTheme();
-
-//     useEffect(() => {
-//         if (!currentThemeId) return;
-//         getTheme(currentThemeId).then(setTheme);
-//     }, [currentThemeId]);
-    
-//     return { theme, onChange: setCurrentThemeId };
-// }
-
 export const useLayoutTheme = () => {
     const defaultThemeId = useSetting("defaultThemeId");
     const [currentThemeId, setCurrentThemeId] = useCurrentId();

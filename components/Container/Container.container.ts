@@ -20,8 +20,8 @@ export const Container = withLayoutMetadata(
     {
         name: "Container",
         displayName: "Container",
-        category: "General",
-        subCategory: "Layouts",
+        category: "Layout",
+        subCategory: "Structure",
         description: "A basic container for separating content",
         icon,
         getSlotDisplayName: (slotName) => slotName === 'children' ? 'Children' : slotName,
