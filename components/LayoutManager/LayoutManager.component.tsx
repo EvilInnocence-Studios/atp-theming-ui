@@ -73,6 +73,7 @@ export const LayoutManagerComponent = overridable(({
         </Row>
         <hr />
         <LayoutEditorProvider
+            key={element}
             layout={layout}
             onChange={onChange}
         >
