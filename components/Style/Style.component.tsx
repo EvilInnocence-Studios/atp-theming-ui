@@ -15,13 +15,13 @@ export const StyleComponent = overridable(({slots, css, vars, fonts, theme, __la
                 font-display: swap;
             }
         `).join("\n")}
-        #rootLayout {"{"}
+        .rootLayout {"{"}
             {Object.values(objMap<IStyleVar, string>(v => `--${v.name}: ${v.value};`)(vars || {})).join("\n")}
         {"}"}
         {css}
     </style>
 
-    <div id="rootLayout" style={{display: "contents"}}>
+    <div className="rootLayout" style={{display: "contents"}}>
         <ConfigProvider theme={theme}>
             <SlotRenderer
                 slots={slots?.[`children`]} 
