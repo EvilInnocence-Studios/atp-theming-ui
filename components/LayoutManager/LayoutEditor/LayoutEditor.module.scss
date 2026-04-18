@@ -44,7 +44,7 @@
 
     .breadcrumb {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 8px;
         padding: 12px 16px;
         background-color: var(--bgLightColor);
@@ -55,13 +55,14 @@
 
         .breadcrumbItem {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
         }
 
         .breadcrumbSeparator {
             color: var(--textColorMuted, #999);
             font-size: 12px;
+            margin-top: 8px;
         }
 
         .breadcrumbButton {

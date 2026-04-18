@@ -18,7 +18,12 @@ export const module: IModule = {
     routes: themingRoutes,
 };
 
-ComponentRegistry.register("StandardLayout", StandardLayout, { category: "Layout", subCategory: "Structure", displayName: "Standard Layout" });
+ComponentRegistry.register("StandardLayout", StandardLayout, { 
+    category: "Layout", 
+    subCategory: "Structure", 
+    displayName: "Standard Layout",
+    getSlotDisplayName: (slotName) => slotName.charAt(0).toUpperCase() + slotName.slice(1)
+});
 ComponentRegistry.register("Empty", () => <div></div>, { category: "Layout", subCategory: "Structure", displayName: "Empty" });
 ComponentRegistry.register(MultiColumnLayout);
 ComponentRegistry.register(Container);

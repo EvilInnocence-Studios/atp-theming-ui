@@ -20,7 +20,21 @@ export const Breadcrumb = ({ path, onSelect }: BreadcrumbProps) => {
             {path.map((component, index) => {
                 const componentDef = ComponentRegistry.get(component.component);
                 const displayName = component.name || componentDef?.displayName || component.component;
+                let slotDisplayName: string | undefined;
                 
+                const child = path[index + 1];
+                if (child && component.slots) {
+                    const slotEntry = Object.entries(component.slots).find(([_, items]) => 
+                        items.some(item => 'component' in item && (item as ILayoutComponent).id === child.id)
+                    );
+                    if (slotEntry) {
+                        const slotName = slotEntry[0];
+                        if (componentDef?.getSlotDisplayName) {
+                            slotDisplayName = componentDef.getSlotDisplayName(slotName, component.props || {});
+                        }
+                    }
+                }
+
                 return (
                     <div key={component.id} className={styles.breadcrumbItem}>
                         {index > 0 && (
@@ -32,9 +46,25 @@ export const Breadcrumb = ({ path, onSelect }: BreadcrumbProps) => {
                         <button
                             className={styles.breadcrumbButton}
                             onClick={() => onSelect(component.id!)}
-                            title={`Select ${displayName}`}
+                            title={slotDisplayName ? `Select ${displayName} (${slotDisplayName})` : `Select ${displayName}`}
                         >
-                            {componentDef?.icon && <SVG src={componentDef?.icon} />} {displayName}
+                            {componentDef?.icon && <SVG src={componentDef?.icon} />} 
+                            <div style={{ textAlign: 'left', position: 'relative' }}>
+                                <span>{displayName}</span>
+                                {slotDisplayName && (
+                                    <span style={{ 
+                                        position: 'absolute', 
+                                        left: 0, 
+                                        top: '100%', 
+                                        fontSize: '0.85em', 
+                                        fontStyle: 'italic', 
+                                        opacity: 0.85,
+                                        whiteSpace: 'nowrap'
+                                    }}>
+                                        {slotDisplayName}
+                                    </span>
+                                )}
+                            </div>
                         </button>
                     </div>
                 );
