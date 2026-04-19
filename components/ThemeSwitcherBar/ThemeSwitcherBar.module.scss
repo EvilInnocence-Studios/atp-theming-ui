@@ -1,0 +1,22 @@
+@use "@styles/globals.module.scss";
+
+.themeSwitcherBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #888888;
+    border-bottom: 1px solid #000000;
+
+    .extra {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+
+    .switcher {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+    }
+}
