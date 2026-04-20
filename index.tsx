@@ -8,6 +8,7 @@ import { Text } from "./components/Text";
 import { ThemeDescription } from "./components/ThemeDescription";
 import { ThemeName } from "./components/ThemeName";
 import { ThemeSwitcher } from "./components/ThemeSwitcher";
+import { ThemeSwitcherBar } from "./components/ThemeSwitcherBar";
 import { ComponentRegistry, LayoutRegistry } from "./lib/layout/componentRegistry";
 import { themingMenus } from "./lib/menus";
 import { themingRoutes } from "./lib/routes";
@@ -31,6 +32,7 @@ ComponentRegistry.register(Text);
 ComponentRegistry.register(RouteTable);
 ComponentRegistry.register(Style);
 ComponentRegistry.register(ThemeSwitcher);
+ComponentRegistry.register(ThemeSwitcherBar);
 ComponentRegistry.register(ThemeName);
 ComponentRegistry.register(ThemeDescription);
 
