@@ -38,6 +38,8 @@ LayoutRegistry.register({
     name: "layout",
     displayName: "Page Layout",
     description: "The site container (header, footer, etc.)",
+    category: "General",
+    subCategory: "Layout",
     defaultLayout: {
         component: "Content",
     },
@@ -47,6 +49,8 @@ LayoutRegistry.register({
     name: "homepage",
     displayName: "Homepage",
     description: "The homepage layout and design",
+    category: "General",
+    subCategory: "Layout",
     defaultLayout: {
         component: "Empty"
     },

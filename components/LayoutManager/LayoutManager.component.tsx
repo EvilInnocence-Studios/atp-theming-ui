@@ -3,12 +3,17 @@ import { Label } from "@core/components/Label";
 import { overridable } from "@core/lib/overridable";
 import { faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { LayoutRegistry } from "@theming/lib/layout/componentRegistry";
-import { Button, Col, Modal, Row } from "antd";
+import { ILayoutOption, LayoutRegistry } from "@theming/lib/layout/componentRegistry";
+import { Button, Col, Modal, Row, Tabs } from "antd";
 import { useState } from "react";
 import { LayoutEditor, LayoutEditorProvider } from "./LayoutEditor";
 import { LayoutManagerProps } from "./LayoutManager.d";
 import styles from './LayoutManager.module.scss';
+import { Index } from "ts-functional/dist/types";
+
+interface ILayoutOptionDetails extends ILayoutOption {
+    complete: boolean;
+}
 
 export const LayoutManagerComponent = overridable(({
     theme, updater, element, setElement, layout, onChange, UpdateButtons,
@@ -16,8 +21,26 @@ export const LayoutManagerComponent = overridable(({
 }:LayoutManagerProps) => {
     const [isElementModalOpen, setIsElementModalOpen] = useState(false);
 
-    const options = LayoutRegistry.getOptions();
-    const currentOption = options.find(o => o.value === element);
+    const rawOptions = LayoutRegistry.getOptions();
+    const options: Index<Index<ILayoutOptionDetails[]>> = rawOptions
+        .reduce((acc, option) => {
+            const category = option.category || "Other";
+            const subCategory = option.subCategory || "Other";
+            if (!acc[category]) {
+                acc[category] = {};
+            }
+            if (!acc[category][subCategory]) {
+                acc[category][subCategory] = [];
+            }
+
+            acc[category][subCategory].push({
+                ...option,
+                complete: theme?.json?.[option.value] !== undefined,
+            });
+            return acc;
+        }, {} as Index<Index<ILayoutOptionDetails[]>>);
+
+    const currentOption = rawOptions.find(o => o.value === element);
 
     return <div className={classes.layoutManager}>
         <Row gutter={[16,16]}>
@@ -42,24 +65,58 @@ export const LayoutManagerComponent = overridable(({
                     footer={null}
                     width={1000}
                 >
-                    <Row
-                        gutter={[16,16]}
-                        className={classes.optionList}
-                    >
-                        {options.map(item => (
-                            <Col
-                                span={8}
-                                key={item.value}
-                            >
-                                <div
-                                    className={`${classes.optionItem} ${item.value === element ? classes.selectedOption : ''}`}
-                                    onClick={() => { setElement(item.value); setIsElementModalOpen(false); }}
-                                >
-                                    {item.label}
-                                </div>
-                            </Col>
-                        ))}
-                    </Row>
+                    <Tabs
+                        tabPosition="top"
+                        items={Object.keys(options).map(category => {
+                            const subCategories = options[category];
+                            const allItems = Object.values(subCategories).flat();
+                            const total = allItems.length;
+                            const complete = allItems.filter(i => i.complete).length;
+                            const color = total === 0 ? "inherit" : complete === total ? "#5cb85c" : complete === 0 ? "#d9534f" : "#f0ad4e";
+
+                            return {
+                                key: category,
+                                label: <span style={{ color }}>{category} ({complete}/{total})</span>,
+                                children: (
+                                    <Tabs
+                                        tabPosition="left"
+                                        items={Object.keys(subCategories).map(subCategory => {
+                                            const items = subCategories[subCategory];
+                                            const subTotal = items.length;
+                                            const subComplete = items.filter(i => i.complete).length;
+                                            const subColor = subTotal === 0 ? "inherit" : subComplete === subTotal ? "#5cb85c" : subComplete === 0 ? "#d9534f" : "#f0ad4e";
+
+                                            return {
+                                                key: subCategory,
+                                                label: <span style={{ color: subColor }}>{subCategory} ({subComplete}/{subTotal})</span>,
+                                                children: (
+                                                    <Row
+                                                        gutter={[16,16]}
+                                                        className={classes.optionList}
+                                                    >
+                                                        {items.map(item => (
+                                                            <Col
+                                                                span={8}
+                                                                key={item.value}
+                                                            >
+                                                                <div
+                                                                    className={`${classes.optionItem} ${item.value === element ? classes.selectedOption : ''}`}
+                                                                    style={{ color: item.complete ? '#5cb85c' : '#d9534f' }}
+                                                                    onClick={() => { setElement(item.value); setIsElementModalOpen(false); }}
+                                                                >
+                                                                    {item.label}
+                                                                </div>
+                                                            </Col>
+                                                        ))}
+                                                    </Row>
+                                                )
+                                            };
+                                        })}
+                                    />
+                                )
+                            };
+                        })}
+                    />
                 </Modal>
             </Col>
             <Col span={8}>

@@ -78,6 +78,8 @@ export const ComponentRegistry = {
 
 export declare interface ILayoutRegistration<Context = undefined> {
     name: string;
+    category?: string;
+    subCategory?: string;
     displayName?: string;
     description?: string;
     defaultLayout: ILayoutComponent;
@@ -85,6 +87,13 @@ export declare interface ILayoutRegistration<Context = undefined> {
 }
 
 const layouts: Index<ILayoutRegistration<any>> = {};
+
+export declare interface ILayoutOption {
+    value: string;
+    label: React.ReactNode;
+    category?: string;
+    subCategory?: string;
+}
 
 export const LayoutRegistry = {
     register: <Context extends undefined | any>(registration: ILayoutRegistration<Context>) => {
@@ -98,11 +107,13 @@ export const LayoutRegistry = {
         Object.keys(layouts),
     getOptions: () => Object.values(layouts)
         .sort((a, b) => a.priority - b.priority)
-        .map(({ name, displayName, description }) => ({
+        .map(({ name, displayName, description, category, subCategory }): ILayoutOption => ({
             value: name,
             label: <>
                 <div><b>{displayName || name}</b></div>
                 <div><em>{description || ""}</em></div>
-            </>
+            </>,
+            category: category,
+            subCategory: subCategory,
         })),
 }
