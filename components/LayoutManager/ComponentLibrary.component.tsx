@@ -1,7 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
-import { Collapse, Tabs, Select } from "antd";
+import { Collapse, Tabs, Select, Button } from "antd";
 import SVG from 'react-inlinesvg';
 import styles from './LayoutEditor/LayoutEditor.module.scss';
 import { overridable } from "@core/lib/overridable";
@@ -17,10 +17,10 @@ const DraggablePaletteItem = ({ component, classes }: { component: any, classes:
     } : undefined;
 
     return (
-        <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={classes.component}>
+        <Button ref={setNodeRef} style={style} {...listeners} {...attributes} className={classes.component}>
             {component.icon && <SVG src={component.icon} />}
             <span>{component.displayName}</span>
-        </div>
+        </Button>
     );
 };
 

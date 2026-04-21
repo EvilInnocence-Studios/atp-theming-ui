@@ -4,7 +4,7 @@ import { overridable } from "@core/lib/overridable";
 import { faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ILayoutOption, LayoutRegistry } from "@theming/lib/layout/componentRegistry";
-import { Button, Col, Modal, Row, Tabs } from "antd";
+import { Button, Card, Col, Modal, Row, Tabs } from "antd";
 import { useState } from "react";
 import { LayoutEditor, LayoutEditorProvider } from "./LayoutEditor";
 import { LayoutManagerProps } from "./LayoutManager.d";
@@ -99,13 +99,13 @@ export const LayoutManagerComponent = overridable(({
                                                                 span={8}
                                                                 key={item.value}
                                                             >
-                                                                <div
+                                                                <Card
                                                                     className={`${classes.optionItem} ${item.value === element ? classes.selectedOption : ''}`}
                                                                     style={{ color: item.complete ? '#5cb85c' : '#d9534f' }}
                                                                     onClick={() => { setElement(item.value); setIsElementModalOpen(false); }}
                                                                 >
                                                                     {item.label}
-                                                                </div>
+                                                                </Card>
                                                             </Col>
                                                         ))}
                                                     </Row>

@@ -4,6 +4,7 @@ import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
 import { ILayoutComponent } from "@theming/lib/layout/layout";
 import SVG from 'react-inlinesvg';
 import styles from './LayoutEditor/LayoutEditor.module.scss';
+import { Button, Card } from "antd";
 
 interface BreadcrumbProps {
     path: ILayoutComponent[];
@@ -16,7 +17,7 @@ export const Breadcrumb = ({ path, onSelect }: BreadcrumbProps) => {
     }
 
     return (
-        <div className={styles.breadcrumb}>
+        <Card className={styles.breadcrumb}>
             {path.map((component, index) => {
                 const componentDef = ComponentRegistry.get(component.component);
                 const displayName = component.name || componentDef?.displayName || component.component;
@@ -43,7 +44,8 @@ export const Breadcrumb = ({ path, onSelect }: BreadcrumbProps) => {
                                 className={styles.breadcrumbSeparator}
                             />
                         )}
-                        <button
+                        <Button
+                            type="link"
                             className={styles.breadcrumbButton}
                             onClick={() => onSelect(component.id!)}
                             title={slotDisplayName ? `Select ${displayName} (${slotDisplayName})` : `Select ${displayName}`}
@@ -65,10 +67,10 @@ export const Breadcrumb = ({ path, onSelect }: BreadcrumbProps) => {
                                     </span>
                                 )}
                             </div>
-                        </button>
+                        </Button>
                     </div>
                 );
             })}
-        </div>
+        </Card>
     );
 };

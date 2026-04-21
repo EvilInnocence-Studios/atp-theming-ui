@@ -6,7 +6,7 @@
         margin-bottom: 8px;
     }
     .rootDropTarget {
-        border: 2px dashed var(--borderColor, #ccc);
+        border: 2px dashed #444444;
         padding: 20px;
         text-align: center;
         background-color: transparent;
@@ -14,8 +14,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--textColorMuted, #999);
-        border-radius: var(--borderRadius, 4px);
+        color: #999;
+        border-radius: 4px;
         transition: background-color 0.2s ease;
 
         &.active {
@@ -29,13 +29,11 @@
         .component {
             flex: 1 1 48%;
             max-width: 48%;
-            text-align: left;
+            justify-content: left;
             display: flex;
             align-items: center;
             gap: 8px;
-            background-color: var(--bgLightColor);
-            border: solid 4px var(--borderColor);
-            border-radius: var(--borderRadius);
+            border-radius: 4px;
             svg {
                 width: 16px !important;
             }
@@ -43,69 +41,48 @@
     }
 
     .breadcrumb {
-        display: flex;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 12px 16px;
-        background-color: var(--bgLightColor);
-        border: 1px solid var(--borderColor);
-        border-radius: var(--borderRadius);
         margin-bottom: 16px;
-        flex-wrap: wrap;
-
-        .breadcrumbItem {
+        :global(.ant-card-body) {
             display: flex;
             align-items: flex-start;
             gap: 8px;
-        }
+            padding: 12px 16px;
+            flex-wrap: wrap;
 
-        .breadcrumbSeparator {
-            color: var(--textColorMuted, #999);
-            font-size: 12px;
-            margin-top: 8px;
-        }
-
-        .breadcrumbButton {
-            position: relative;
-            background: none;
-            border: none;
-            padding: 4px 8px 4px 36px;
-            cursor: pointer;
-            color: var(--textColor);
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            font-size: 14px;
-
-            svg {
-                width: 24px;
-                height: 24px;
-                position: absolute;
-                left: 8px;
-                top: 0px;
+            .breadcrumbItem {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
             }
 
-            &:hover {
-                background-color: var(--bgColor);
-                color: var(--primaryColor);
+            .breadcrumbSeparator {
+                font-size: 12px;
+                margin-top: 8px;
             }
 
-            &:active {
-                transform: scale(0.98);
+            .breadcrumbButton {
+                position: relative;
+                padding: 4px 8px 4px 36px;
+                cursor: pointer;
+                border-radius: 4px;
+                transition: all 0.2s ease;
+                font-size: 14px;
+
+                svg {
+                    width: 24px;
+                    height: 24px;
+                    position: absolute;
+                    left: 8px;
+                    top: 0px;
+                }
             }
         }
-    }
-
-    .propEditor {
-        margin-top: 24px;
-        padding-top: 16px;
-        border-top: 1px solid var(--borderColor);
     }
 
     h3.paletteHeader {
         margin-top: 0;
-        background-color: var(--bgLightColor);
         padding: 8px 0 8px 36px;
-        border-radius: var(--borderRadius);
+        border-radius: 4px;
         position: relative;
         svg {
             width: 32px;
@@ -117,19 +94,14 @@
     }
 
     .childrenSelector {
-        margin-top: 24px;
-        padding-top: 16px;
-        border-top: 1px solid var(--borderColor);
-
         h4 {
             margin: 0 0 12px 0;
             font-size: 14px;
             font-weight: 600;
-            color: var(--textColor);
         }
 
         .emptyChildren {
-            color: var(--textColorMuted, #999);
+            color: #999;
             font-size: 13px;
             font-style: italic;
             padding: 8px 0;
@@ -149,10 +121,10 @@
                 margin-bottom: 8px;
                 font-size: 13px;
                 font-weight: 500;
-                color: var(--textColor);
+                color: #444444;
 
                 .slotIcon {
-                    color: var(--primaryColor);
+                    color: #444444;
                 }
 
                 .slotName {
@@ -160,7 +132,7 @@
                 }
 
                 .slotCount {
-                    color: var(--textColorMuted, #999);
+                    color: #999;
                     font-size: 12px;
                 }
             }
@@ -172,7 +144,7 @@
                 padding-left: 20px;
 
                 .emptySlot {
-                    color: var(--textColorMuted, #999);
+                    color: #999;
                     font-size: 12px;
                     font-style: italic;
                     padding: 4px 0;
@@ -190,13 +162,10 @@
                     align-items: center;
                     gap: 8px;
                     padding: 8px 12px 8px 28px;
-                    background: var(--bgLightColor);
-                    border: 1px solid var(--borderColor);
                     border-radius: 4px;
                     cursor: pointer;
                     transition: all 0.2s ease;
                     font-size: 13px;
-                    color: var(--textColor);
                     text-align: left;
                     flex: 1;
 
@@ -213,8 +182,6 @@
                     }
 
                     &:hover {
-                        background-color: var(--bgColor);
-                        border-color: var(--primaryColor);
                         transform: translateX(2px);
                     }
 

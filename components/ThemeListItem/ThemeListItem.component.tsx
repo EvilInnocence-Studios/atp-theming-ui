@@ -4,7 +4,7 @@ import { S3Image } from "@core/components/S3Image";
 import { overridable } from "@core/lib/overridable";
 import { faFileExport, faPaintRoller, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Space, Switch, Upload } from "antd";
+import { Button, Card, Space, Switch, Upload } from "antd";
 import { Link } from "react-router";
 import { ThemeListItemProps } from "./ThemeListItem.d";
 import styles from './ThemeListItem.module.scss';
@@ -15,7 +15,7 @@ export const ThemeListItemComponent = overridable(({
     upload, remove, exportTheme,
     defaultThemeId, setDefaultTheme
 }:ThemeListItemProps) =>
-    <div className={classes.themeListItem}>
+    <Card className={classes.themeListItem}>
         <Space align="baseline">
             <h2>
                 <Editable value={theme.name} onChange={updateString("name")} />
@@ -32,11 +32,11 @@ export const ThemeListItemComponent = overridable(({
         <Upload.Dragger className={classes.upload} customRequest={({ file }) => upload(file as File)} showUploadList={false}>
             {theme.imageUrl ? <S3Image folderSetting="themeThumbnailFolder" fileName={theme.imageUrl} /> : <><FontAwesomeIcon icon={faUpload} /> Upload Thumbnail</>}
         </Upload.Dragger>
-        <Button type="primary" size="large">
+        <Button className={classes.designBtn} type="primary" size="large">
             <Link to={`/theme/${theme.id}`}>
                 <FontAwesomeIcon icon={faPaintRoller} /> Design
             </Link>
         </Button>
         <Editable placeholder="Theme description goes here." textArea value={theme.description} onChange={updateString("description")} />
-    </div>
+    </Card>
 );

@@ -32,37 +32,9 @@ export const useLayoutTheme = () => {
     return { theme, onChange: setCurrentThemeId };
 }
 
-export const useTheme = (vars:Index<IStyleVar>) => {
-    // Map var values to names
-    const variables = Object.values(vars || {}).reduce((acc, v) => {
-        acc[v.name] = v.value;
-        return acc;
-    }, {} as Index<string>);
-
+export const useTheme = (_vars:Index<IStyleVar>) => {
     // Generate and return the Ant Design theme tokens
-    const theme:ThemeConfig = Object.keys(variables).length === 0 ? {algorithm: antTheme.darkAlgorithm} : {
-        algorithm: antTheme.darkAlgorithm,
-        token: {
-            colorPrimary: variables.primaryColor || '#000000',
-            colorBorder: variables.borderColor || '#CCCCCC',
-            colorBgBase: variables.bgColor || "#1A1A1A",
-            colorText: variables.textColor || '#E0E0E0',
-        },
-        components: {
-            Layout: {
-                headerBg: variables.bgLightColor || '#2A2A2A',
-                headerPadding: "0",
-                siderBg: variables.bgLightColor || '#2A2A2A',
-            },
-            Card: {
-                headerBg: variables.bgLightColor || '#2A2A2A',
-    
-            },
-            Input: {
-                activeShadow: `0 0 0 1px ${variables.secondaryColor || '#FFFFFF'}`,
-            }
-        }
-    }
+    const theme:ThemeConfig = {algorithm: antTheme.darkAlgorithm}
 
     return theme;
 }

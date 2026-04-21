@@ -3,10 +3,6 @@
 .themeListItem {
     flex-grow: 1;
     max-width: 32%;
-    border: solid 1px var(--borderColor);
-    background-color: var(--bgLightColor);
-    border-radius: var(--borderRadius);
-    padding: var(--padding);
     h2 {
         margin-top: 0;
         
@@ -15,10 +11,10 @@
         height: 128px !important;
     }
     textarea {
-        margin: var(--padding) 0;
+        margin: 16px 0;
     }
-    > button {
-        margin-top: var(--padding);
+    .designBtn {
+        margin-top: 16px;
         width: 100%;
     }
     img {

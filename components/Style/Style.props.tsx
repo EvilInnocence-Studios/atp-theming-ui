@@ -1,11 +1,12 @@
+import { MediaPicker } from "@common/components/MediaPicker";
 import { DeleteBtn } from "@core/components/DeleteBtn";
 import { Editable } from "@core/components/Editable";
-import { uuidv4 } from "@theming/lib/layout/utils";
-import { Button, Col, ColorPicker, Row, Space, Tabs, Select } from "antd";
-import { objFilter, objMap } from "ts-functional";
-import { IStyleInputProps, IStyleVar, IStyleFontInput } from "./Style.d";
-import { MediaPicker } from "@common/components/MediaPicker";
 import { Label } from "@core/components/Label";
+import { uuidv4 } from "@theming/lib/layout/utils";
+import { Button, Col, ColorPicker, Row, Select, Space, Tabs } from "antd";
+import { objFilter, objMap } from "ts-functional";
+import { IStyleFontInput, IStyleInputProps, IStyleVar } from "./Style.d";
+import styles from './Style.module.scss';
 
 export const StylePropEditor = (
     {vars = {}, fonts = {}}: IStyleInputProps,
@@ -168,7 +169,7 @@ export const StylePropEditor = (
                             </div>
                         </Col>
                     </Row>
-                    <hr style={{ margin: "16px 0", border: 'none', borderTop: '1px solid var(--borderColor, #e8e8e8)' }} />
+                    <hr className={styles.hr} />
                 </div>)(fonts))}
             </Tabs.TabPane>
         </Tabs>

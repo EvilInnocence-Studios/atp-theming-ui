@@ -8,6 +8,7 @@ import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
 import { ILayoutComponent } from "@theming/lib/layout/layout";
 import SVG from 'react-inlinesvg';
 import styles from './LayoutEditor/LayoutEditor.module.scss';
+import { Button } from "antd";
 
 interface ChildrenSelectorProps {
     selectedComponent: ILayoutComponent;
@@ -39,7 +40,7 @@ const SortableChildItem = ({ component, onSelectChild, onDeleteChild }: { compon
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={styles.childItem}>
-            <button
+            <Button
                 className={styles.childButton}
                 onClick={() => component.id && onSelectChild(component.id)}
                 title={`Select ${displayName}`}
@@ -48,7 +49,7 @@ const SortableChildItem = ({ component, onSelectChild, onDeleteChild }: { compon
             >
                 {componentDef?.icon && <SVG src={componentDef.icon} />}
                 <span className={styles.componentName}>{displayName}</span>
-            </button>
+            </Button>
             <DeleteBtn
                 onClick={() => component.id && onDeleteChild(component.id)}
                 entityType="component"
