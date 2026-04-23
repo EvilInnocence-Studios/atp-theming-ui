@@ -33,6 +33,7 @@ export declare interface IStyleInputProps {
     name?: string;
     vars?: Index<IStyleVar>;
     fonts?: Index<IStyleFontInput>;
+    antdAlgorithm?: "default" | "dark" | "compact";
 }
 
 export type StyleProps = IStyleInputProps & IStyleProps;

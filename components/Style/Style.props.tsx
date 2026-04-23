@@ -9,7 +9,7 @@ import { IStyleFontInput, IStyleInputProps, IStyleVar } from "./Style.d";
 import styles from './Style.module.scss';
 
 export const StylePropEditor = (
-    {vars = {}, fonts = {}}: IStyleInputProps,
+    {vars = {}, fonts = {}, antdAlgorithm}: IStyleInputProps,
     _updateProps: (props: any) => void,
     updateProp: (prop: string) => (value: any) => void
 ) => {
@@ -55,6 +55,17 @@ export const StylePropEditor = (
     };
 
     return <>
+
+        <Select
+            value={antdAlgorithm || "default"}
+            onChange={updateProp("antdAlgorithm")}
+            style={{ width: '100%' }}
+            options={[
+                { value: "default", label: "Light Theme" },
+                { value: "dark", label: "Dark Theme" },
+                { value: "compact", label: "Compact Theme" },
+            ]}
+        />
         <Tabs>
             <Tabs.TabPane key="colors" tab="Colors">
                 <Button

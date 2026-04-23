@@ -5,16 +5,20 @@ import { overridable } from "@core/lib/overridable";
 import { useLoaderAsync } from "@core/lib/useLoader";
 import { withLayoutMetadata } from "@theming/lib/layout/componentRegistry";
 import { ILayoutComponent, ILayoutComponentSerialized } from "@theming/lib/layout/layout";
-import { useTheme } from "@theming/lib/useTheme";
 import { useEffect, useState } from "react";
 import { createInjector, inject, mergeProps } from "unstateless";
 import icon from './icon.svg';
 import { StyleComponent } from "./Style.component";
 import { IStyleFont, IStyleInputProps, IStyleProps, StyleProps } from "./Style.d";
 import { StylePropEditor } from "./Style.props";
+import { theme as AntdTheme } from "antd";
 
-const injectStyleProps = createInjector(({vars, fonts}:IStyleInputProps):IStyleProps => {
-    const theme = useTheme(vars || {});
+const injectStyleProps = createInjector(({fonts, antdAlgorithm}:IStyleInputProps):IStyleProps => {
+    const theme = {algorithm: 
+        antdAlgorithm === "dark"    ? AntdTheme.darkAlgorithm    :
+        antdAlgorithm === "compact" ? AntdTheme.compactAlgorithm :
+                                      AntdTheme.defaultAlgorithm
+    };
     
     const [loadedFonts, setLoadedFonts] = useState<IStyleFont[]>([]);
     const loader = useLoaderAsync();
