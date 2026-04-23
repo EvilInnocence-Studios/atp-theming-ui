@@ -6,7 +6,9 @@ export const TextPropEditor = ({markdown, inline}: ITextInputProps, _updateProps
     return <>
         <Card size="small" title="Text">
             <MarkdownEditor value={markdown || ""} onChange={(markdown) => updateProp("markdown")(markdown)}/>
-            <Checkbox checked={inline} onChange={(e) => updateProp("inline")(e.target.checked)} />
+            <br/>
+            <Checkbox checked={inline} onChange={(e) => updateProp("inline")(e.target.checked)} >Inline</Checkbox>
+            <Checkbox checked={inline} onChange={(e) => updateProp("raw")(e.target.checked)} >Raw</Checkbox>
         </Card>
     </>;
 };
