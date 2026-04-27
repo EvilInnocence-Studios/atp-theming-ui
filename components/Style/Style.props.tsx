@@ -4,9 +4,11 @@ import { Editable } from "@core/components/Editable";
 import { Label } from "@core/components/Label";
 import { uuidv4 } from "@theming/lib/layout/utils";
 import { Button, Col, ColorPicker, Row, Select, Space, Tabs } from "antd";
+import { useState } from "react";
 import { objFilter, objMap } from "ts-functional";
 import { IStyleFontInput, IStyleInputProps, IStyleVar } from "./Style.d";
 import styles from './Style.module.scss';
+import { CalculatedValuesPreview } from "./CalculatedValuesPreview";
 
 const antColorValues: Record<string, string> = {
     colorBgBase: '#fff',
@@ -75,6 +77,8 @@ export const StylePropEditor = (
     _updateProps: (props: any) => void,
     updateProp: (prop: string) => (value: any) => void
 ) => {
+    const [isCalculatedModalOpen, setIsCalculatedModalOpen] = useState(false);
+
     const updateVar = (id:string, key: string) => (value: string) => {
         updateProp('vars')({...vars, [id]: {...vars[id], [key]: value}});
     };
@@ -177,9 +181,18 @@ export const StylePropEditor = (
                     { value: "compact", label: "Compact Theme" },
                 ]}
             />
-            <Button onClick={addBaseVariables} block>
-                Add Standard Base Variables
-            </Button>
+            <Row gutter={8}>
+                <Col span={12}>
+                    <Button onClick={addBaseVariables} block>
+                        Add Standard Base Variables
+                    </Button>
+                </Col>
+                <Col span={12}>
+                    <Button onClick={() => setIsCalculatedModalOpen(true)} block>
+                        Preview Calculated Values
+                    </Button>
+                </Col>
+            </Row>
         </Space>
         <Tabs>
             <Tabs.TabPane key="colors" tab="Colors">
@@ -319,5 +332,11 @@ export const StylePropEditor = (
                 </div>)(fonts))}
             </Tabs.TabPane>
         </Tabs>
+
+        <CalculatedValuesPreview
+            vars={vars as Record<string, IStyleVar>}
+            open={isCalculatedModalOpen}
+            onClose={() => setIsCalculatedModalOpen(false)}
+        />
     </>;
 }
