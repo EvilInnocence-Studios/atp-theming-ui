@@ -127,18 +127,60 @@ export const StylePropEditor = (
         updateProp("fonts")(newFonts);
     };
 
+    const addBaseVariables = () => {
+        const newVars: Record<string, any> = {};
+        const baseVariables = [
+            { name: 'color-base', value: '#3b82f6', type: 'color' },
+            { name: 'color-secondary', value: '#10b981', type: 'color' },
+            { name: 'color-neutral', value: '#6b7280', type: 'color' },
+            { name: 'tint-strength', value: '1', type: 'string' },
+            { name: 'shade-strength', value: '1', type: 'string' },
+            { name: 'white', value: '#ffffff', type: 'color' },
+            { name: 'black', value: '#000000', type: 'color' },
+            { name: 'color-success', value: '#22c55e', type: 'color' },
+            { name: 'color-warning', value: '#eab308', type: 'color' },
+            { name: 'color-error', value: '#ef4444', type: 'color' },
+            { name: 'color-info', value: '#0ea5e9', type: 'color' },
+            { name: 'radius-base', value: '1', type: 'string' }
+        ];
+
+        const existingNames = Object.values(vars).map((v: any) => v.name);
+        
+        baseVariables.forEach(bv => {
+            if (!existingNames.includes(bv.name)) {
+                newVars[uuidv4()] = {
+                    name: bv.name,
+                    value: bv.value,
+                    type: bv.type
+                };
+            }
+        });
+
+        if (Object.keys(newVars).length > 0) {
+            updateProp("vars")({
+                ...vars,
+                ...newVars
+            });
+        }
+    };
+
     return <>
 
-        <Select
-            value={antdAlgorithm || "default"}
-            onChange={updateProp("antdAlgorithm")}
-            style={{ width: '100%' }}
-            options={[
-                { value: "default", label: "Light Theme" },
-                { value: "dark", label: "Dark Theme" },
-                { value: "compact", label: "Compact Theme" },
-            ]}
-        />
+        <Space direction="vertical" style={{ width: '100%', marginBottom: 16 }}>
+            <Select
+                value={antdAlgorithm || "default"}
+                onChange={updateProp("antdAlgorithm")}
+                style={{ width: '100%' }}
+                options={[
+                    { value: "default", label: "Light Theme" },
+                    { value: "dark", label: "Dark Theme" },
+                    { value: "compact", label: "Compact Theme" },
+                ]}
+            />
+            <Button onClick={addBaseVariables} block>
+                Add Standard Base Variables
+            </Button>
+        </Space>
         <Tabs>
             <Tabs.TabPane key="colors" tab="Colors">
                 <Space style={{ marginBottom: 16 }}>
