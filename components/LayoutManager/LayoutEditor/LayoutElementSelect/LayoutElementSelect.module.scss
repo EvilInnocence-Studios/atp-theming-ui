@@ -1,0 +1,10 @@
+@use "@styles/globals.module.scss";
+
+.layoutElementSelect {
+    height: 64px;
+    width: 100%;
+    > span {
+        width: 100%;
+        display: block;
+    }
+}
