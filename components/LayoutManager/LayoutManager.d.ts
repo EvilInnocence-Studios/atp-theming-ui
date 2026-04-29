@@ -1,4 +1,4 @@
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 import { ILayoutComponent } from "@core/lib/layout/layout";
 import { IUpdater } from "@core/lib/useUpdater";
 

@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { ILayoutComponent } from "./layout";
 import { IToggle } from "@core/lib/useToggle";
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 import { IUpdater } from "@core/lib/useUpdater";
 
 export interface ILayoutEditorContext {

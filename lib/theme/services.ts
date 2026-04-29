@@ -1,4 +1,4 @@
-import { ITheme, NewTheme } from "@common-shared/theme/types";
+import { ITheme, NewTheme } from "@theming-shared/theme/types";
 import { IMethods } from "@core/lib/types";
 import { getResults } from "@core/lib/util";
 import { memoize } from "ts-functional";

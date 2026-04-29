@@ -1,4 +1,4 @@
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 import { services } from "@core/lib/api";
 import { overridable } from "@core/lib/overridable";
 import { withLayoutMetadata } from "@theming/lib/layout/componentRegistry";

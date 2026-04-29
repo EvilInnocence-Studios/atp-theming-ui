@@ -10,6 +10,7 @@ import { LayoutEditor, LayoutEditorProvider } from "./LayoutEditor";
 import { LayoutManagerProps } from "./LayoutManager.d";
 import styles from './LayoutManager.module.scss';
 import { Index } from "ts-functional/dist/types";
+import { GlobalStyleEditor } from "../GlobalStyleEditor";
 
 interface ILayoutOptionDetails extends ILayoutOption {
     complete: boolean;
@@ -121,6 +122,7 @@ export const LayoutManagerComponent = overridable(({
             </Col>
             <Col span={8}>
                 {theme && updater && <Label label="Theme Name"><Editable value={theme.name || ""} onChange={updater.updateString("name")} /></Label>}
+                <GlobalStyleEditor />
             </Col>
             <Col span={6}>
                 <div className={classes.header}>

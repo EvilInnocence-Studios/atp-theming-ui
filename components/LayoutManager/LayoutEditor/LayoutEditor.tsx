@@ -1,4 +1,4 @@
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 import { useToggle } from "@core/lib/useToggle";
 import { DndContext, PointerSensor, pointerWithin, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
 import { SelectableItem } from "@theming/components/SlotRenderer/SlotRenderer.component";

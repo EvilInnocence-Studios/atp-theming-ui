@@ -1,4 +1,4 @@
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 import { useSetting } from "@common/lib/setting/services";
 import { services } from "@core/lib/api";
 import { IStyleVar } from "@theming/components/Style/Style";

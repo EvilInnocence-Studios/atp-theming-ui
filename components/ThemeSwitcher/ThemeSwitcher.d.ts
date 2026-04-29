@@ -1,6 +1,6 @@
 import { ILayoutComponent } from "@theming/components/LayoutManager/LayoutManager.d";
 import { Index } from "ts-functional/dist/types";
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 
 export declare interface IThemeSwitcherProps {
     themes: ITheme[];

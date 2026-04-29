@@ -3,7 +3,7 @@ import {ThemeListItemComponent} from "./ThemeListItem.component";
 import {IThemeListItemInputProps, ThemeListItemProps, IThemeListItemProps} from "./ThemeListItem.d";
 import { overridable } from "@core/lib/overridable";
 import { useUpdater } from "@core/lib/useUpdater";
-import { ITheme } from "@common-shared/theme/types";
+import { ITheme } from "@theming-shared/theme/types";
 import { services } from "@core/lib/api";
 import { flash } from "@core/lib/flash";
 import { serializeTheme } from "@theming/lib/serialize";

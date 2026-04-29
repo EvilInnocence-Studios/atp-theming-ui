@@ -1,5 +1,5 @@
 import { ISetting } from "@common-shared/setting/types";
-import { ITheme, NewTheme } from "@common-shared/theme/types";
+import { ITheme, NewTheme } from "@theming-shared/theme/types";
 import { services } from "@core/lib/api";
 import { flash } from "@core/lib/flash";
 import { overridable } from "@core/lib/overridable";

@@ -1,4 +1,4 @@
-import { ITheme, IThemeSerialized } from "@common-shared/theme/types";
+import { ITheme, IThemeSerialized } from "@theming-shared/theme/types";
 import { services } from "@core/lib/api";
 import JSZip from 'jszip';
 import { Index } from "ts-functional/dist/types";
