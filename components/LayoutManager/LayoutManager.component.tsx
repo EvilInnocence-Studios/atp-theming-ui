@@ -29,7 +29,7 @@ export const LayoutManagerComponent = overridable(({
         </Col>
         <Col span={8}>
             {theme && updater && <Label label="Theme Name"><Editable value={theme.name || ""} onChange={updater.updateString("name")} /></Label>}
-            <GlobalStyleEditor />
+            <GlobalStyleEditor theme={theme} updater={updater} />
         </Col>
         <Col span={6}>
             <div className={classes.header}>

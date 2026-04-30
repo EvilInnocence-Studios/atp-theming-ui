@@ -1,1 +1,78 @@
-@use "@styles/globals.module.scss";
+.globalStyleModal {
+    :global {
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #555 rgba(0, 0, 0, 0.1);
+        }
+
+        *::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        *::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+        *::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+            
+            &:hover {
+                background: #777;
+            }
+        }
+
+        .ant-modal-content {
+            display: flex;
+            flex-direction: column;
+            max-height: 50vh;
+            position: relative;
+        }
+        .ant-modal-body {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ant-tabs-nav {
+            margin-bottom: 16px;
+        }
+
+        .ant-tabs {
+            height: calc(50vh - 78px);
+            display: flex;
+            flex-direction: column;
+            
+            .ant-tabs-content-holder {
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            .ant-tabs-content {
+                height: 100%;
+            }
+            .ant-tabs-tabpane {
+                height: 100%;
+            }
+        }
+    }
+}
+
+.globalStyleModalWrap {
+    pointer-events: none;
+    
+    :global(.ant-modal) {
+        pointer-events: auto;
+    }
+}
+
+.editorLayout {
+    height: 100%;
+}
+
+.hr {
+    border: none;
+    border-top: 1px solid #f0f0f0;
+    margin: 16px 0;
+}

@@ -5,13 +5,12 @@ import { overridable } from "@core/lib/overridable";
 import { useLoaderAsync } from "@core/lib/useLoader";
 import { withLayoutMetadata } from "@theming/lib/layout/componentRegistry";
 import { ILayoutComponent, ILayoutComponentSerialized } from "@theming/lib/layout/layout";
+import { theme as AntdTheme } from "antd";
 import { useEffect, useState } from "react";
 import { createInjector, inject, mergeProps } from "unstateless";
 import icon from './icon.svg';
 import { StyleComponent } from "./Style.component";
 import { IStyleFont, IStyleInputProps, IStyleProps, StyleProps } from "./Style.d";
-import { StylePropEditor } from "./Style.props";
-import { theme as AntdTheme } from "antd";
 
 const injectStyleProps = createInjector(({fonts, antdAlgorithm}:IStyleInputProps):IStyleProps => {
     const theme = {algorithm: 
@@ -78,7 +77,6 @@ export const Style = withLayoutMetadata(
         description: "",
         icon,
         getSlotDisplayName: (slotName, props) => props[slotName] || slotName,
-        propEditor: StylePropEditor,
         serialize: async (cmp:ILayoutComponent, context: { addFile: (name: string, blob: Blob) => void }): Promise<ILayoutComponentSerialized<{fonts?: {img: IMedia, data: string, fontId: string}[]}>> => {
             const fonts = cmp.props?.fonts;
             if (!fonts) return cmp;
