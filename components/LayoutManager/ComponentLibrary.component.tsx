@@ -8,16 +8,13 @@ import { overridable } from "@core/lib/overridable";
 import { useEffect, useState } from "react";
 
 const DraggablePaletteItem = ({ component, classes }: { component: any, classes: any }) => {
-    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: `palette-${component.name}`,
         data: { component }
     });
-    const style = transform ? {
-        transform: CSS.Translate.toString(transform),
-    } : undefined;
 
     return (
-        <Button ref={setNodeRef} style={style} {...listeners} {...attributes} className={classes.component}>
+        <Button ref={setNodeRef} style={{ opacity: isDragging ? 0.3 : 1 }} {...listeners} {...attributes} className={classes.component}>
             {component.icon && <SVG src={component.icon} />}
             <span>{component.displayName}</span>
         </Button>
@@ -25,7 +22,7 @@ const DraggablePaletteItem = ({ component, classes }: { component: any, classes:
 };
 
 const DraggableSelectOption = ({ component, classes, onDragStateChange }: { component: any, classes: any, onDragStateChange: (isDragging: boolean) => void }) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
         id: `palette-select-${component.name}`,
         data: { component }
     });
@@ -34,13 +31,9 @@ const DraggableSelectOption = ({ component, classes, onDragStateChange }: { comp
         onDragStateChange(isDragging);
     }, [isDragging]);
 
-    const style: React.CSSProperties = {
-        transform: transform ? CSS.Translate.toString(transform) : undefined,
-    };
-
     return (
         <div className={classes.componentList}>
-            <div ref={setNodeRef} style={{ ...style, flex: '1 1 100%', maxWidth: '100%', margin: 0 }} {...listeners} {...attributes} className={classes.component}>
+            <div ref={setNodeRef} style={{ flex: '1 1 100%', maxWidth: '100%', margin: 0, opacity: isDragging ? 0.3 : 1 }} {...listeners} {...attributes} className={classes.component}>
                 {component.icon && <SVG src={component.icon} style={{ width: 16, height: 16 }} />}
                 <span>{component.displayName || component.name}</span>
             </div>

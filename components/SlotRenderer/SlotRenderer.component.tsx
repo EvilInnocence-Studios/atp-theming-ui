@@ -10,78 +10,13 @@ import { CSS } from "@dnd-kit/utilities";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { LayoutFixedContext, useLayoutEditor, useLayoutFixed } from "@theming/lib/layout/context";
-import { findComponent } from "@theming/lib/layout/utils";
-import { Tooltip } from "antd";
-import React, { useState, createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
+import { SlotItemOverlay } from "./SlotItemOverlay";
 
 export const DepthContext = createContext<number>(0);
 export const useDepth = () => useContext(DepthContext);
-import { SlotItemOverlay } from "./SlotItemOverlay";
 
-const DropTargetIndicator = ({ parentId, slotName, index, depth = 0, isEditing = false, isFirst = false, isLast = false }: { parentId: string, slotName: string, index: number, depth?: number, isEditing?: boolean, isFirst?: boolean, isLast?: boolean }) => {
-    const { layout } = useLayoutEditor();
-    const parentComponent = layout && layout.component ? findComponent(layout, parentId) : null;
-    const componentDef = parentComponent ? ComponentRegistry.get(parentComponent.component) : null;
-    const parentName = parentComponent ? (parentComponent.name || componentDef?.displayName || parentComponent.component) : "Slot";
 
-    const displaySlotName = componentDef?.getSlotDisplayName 
-        ? componentDef.getSlotDisplayName(slotName, parentComponent?.props || {})
-        : slotName;
-
-    const { setNodeRef, isOver } = useDroppable({
-        id: `${parentId}:${slotName}:index:${index}`,
-        disabled: !isEditing,
-        data: {
-            parentId,
-            slotName,
-            index
-        }
-    });
-
-    const offset = depth * 4;
-    let marginTop = '-6px';
-    let marginBottom = '0';
-    let indicatorPosition: React.CSSProperties = { top: '50%', marginTop: '-2px' };
-
-    if (isFirst) {
-        marginTop = `${offset}px`;
-        marginBottom = `-${12 + offset}px`;
-        indicatorPosition = { top: `-${2 + offset}px` };
-    } else if (isLast) {
-        marginTop = `-${12 + offset}px`;
-        marginBottom = `${offset}px`;
-        indicatorPosition = { bottom: `-${2 + offset}px` };
-    }
-
-    return (
-        <Tooltip title={`Drop into ${parentName} (${displaySlotName})`} open={isOver} placement="right">
-            <div 
-                ref={setNodeRef}
-                data-depth={depth}
-                style={{
-                    height: '12px',
-                    width: '100%',
-                    marginTop,
-                    marginBottom,
-                    position: 'relative',
-                    zIndex: isOver ? 10 : 2,
-                    pointerEvents: 'none' // The hit testing is done by dnd-kit coordinates, we don't want it stealing mouse events otherwise
-                }}
-            >
-                <div style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    height: '4px',
-                    backgroundColor: isOver ? '#1890ff' : 'transparent',
-                    transition: 'background-color 0.2s',
-                    borderRadius: '2px',
-                    ...indicatorPosition
-                }} />
-            </div>
-        </Tooltip>
-    );
-};
 
 export const SelectableItem = ({
     // id,
@@ -219,6 +154,7 @@ export const SortableItem = ({
                 className={`slot-renderer-item ${className || ''}`} 
                 ref={handleRef} 
                 style={style}
+                data-layout-id={id}
                 data-selected={selected}
                 onClick={(e) => { e.stopPropagation(); onSelect(); }}
                 onMouseEnter={() => setIsHovered(true)}
@@ -252,7 +188,8 @@ export const SlotRendererComponent = overridable(({
         disabled: !isEditing || !droppableId,
         data: {
             parentId,
-            slotName
+            slotName,
+            depth
         }
     });
 
@@ -297,6 +234,7 @@ export const SlotRendererComponent = overridable(({
                 onDelete={() => removeComponent(id)}
                 isContainer={componentDef?.isContainer}
                 depth={depth}
+                data={{ parentId, slotName, index }}
             >
                 {itemContent}
             </SortableItem>;
@@ -311,6 +249,7 @@ export const SlotRendererComponent = overridable(({
         const hasItems = slots && slots.length > 0;
         const result = <div 
             className={`slot-renderer-${slotName}`}
+            data-slot-id={droppableId}
             style={{ 
                 display: hasItems ? 'flex' : undefined,
                 flexDirection: hasItems ? 'column' : undefined,
@@ -332,13 +271,9 @@ export const SlotRendererComponent = overridable(({
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
                 {content.map((child, index) => (
                     <React.Fragment key={`slot-item-${index}`}>
-                        {!isFixed && <DropTargetIndicator parentId={parentId!} slotName={slotName!} index={index} depth={depth} isEditing={isEditing?.isset} isFirst={index === 0} />}
                         {child}
                     </React.Fragment>
                 ))}
-                {hasItems && parentId && slotName && !isFixed && (
-                    <DropTargetIndicator parentId={parentId} slotName={slotName} index={slots!.length} depth={depth} isEditing={isEditing?.isset} isLast />
-                )}
             </SortableContext>
             
             {!hasItems && !isFixed && (

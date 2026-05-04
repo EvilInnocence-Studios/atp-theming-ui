@@ -1,6 +1,7 @@
-import { ITheme } from "@theming-shared/theme/types";
 import { useToggle } from "@core/lib/useToggle";
-import { DndContext, PointerSensor, pointerWithin, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
+import { CollisionDetection, DndContext, DragOverlay, PointerSensor, pointerWithin, useDndContext, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
+import { ITheme } from "@theming-shared/theme/types";
+import { DropIndicatorOverlay } from "@theming/components/SlotRenderer/DropIndicatorOverlay";
 import { SelectableItem } from "@theming/components/SlotRenderer/SlotRenderer.component";
 import slotStyles from "@theming/components/SlotRenderer/SlotRenderer.module.scss";
 import { IStyleVar } from "@theming/components/Style/Style.d";
@@ -11,7 +12,8 @@ import { addComponent, ensureIds, findComponent, findParent, getAncestryPath, re
 import { useTheme } from "@theming/lib/useTheme";
 import { Col, ConfigProvider, Row, Switch } from "antd";
 import clsx from "clsx";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import SVG from 'react-inlinesvg';
 import { objMap } from "ts-functional";
 import { Breadcrumb } from "../Breadcrumb.component";
 import { ComponentLibrary } from "../ComponentLibrary.component";
@@ -24,6 +26,122 @@ export declare interface ILayoutEditorProviderProps {
     layout: ILayoutComponent | null;
     onChange: (layout: ILayoutComponent | null) => void;
 }
+
+const findObservableElement = (el: Element): Element | null => {
+    if (['STYLE', 'SCRIPT', 'LINK', 'META'].includes(el.tagName)) return null;
+    const style = window.getComputedStyle(el);
+    if (style.display !== 'contents') return el;
+    for (let i = 0; i < el.children.length; i++) {
+         const found = findObservableElement(el.children[i]);
+         if (found) return found;
+    }
+    return null;
+};
+
+const customMeasure = (element: HTMLElement) => {
+    const observable = findObservableElement(element) || element;
+    const rect = observable.getBoundingClientRect();
+    return {
+        top: rect.top,
+        left: rect.left,
+        bottom: rect.bottom,
+        right: rect.right,
+        width: rect.width,
+        height: rect.height,
+    };
+};
+
+export const globalMousePos = { x: 0, y: 0 };
+export let debugCollisionCount = 0;
+export let debugDroppableCount = 0;
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('pointermove', (e) => {
+        globalMousePos.x = e.clientX;
+        globalMousePos.y = e.clientY;
+    });
+}
+
+const customCollisionDetection: CollisionDetection = (args) => {
+    debugDroppableCount = args.droppableContainers.length;
+    const pointerCollisions = pointerWithin(args);
+    debugCollisionCount = pointerCollisions.length;
+    
+    if (!pointerCollisions.length) {
+        return pointerCollisions;
+    }
+
+    const { pointerCoordinates } = args;
+    if (!pointerCoordinates) {
+        return pointerCollisions;
+    }
+
+    const collisions = pointerCollisions.map(c => {
+        const depth = c.data?.droppableContainer?.data?.current?.depth || 0;
+        const rect = c.data?.droppableContainer?.rect?.current;
+        return { ...c, depth, rect };
+    });
+
+    collisions.sort((a, b) => b.depth - a.depth);
+
+    for (const collision of collisions) {
+        if (!collision.rect) continue;
+        const indentedLeft = collision.rect.left + (collision.depth * 16);
+        
+        if (pointerCoordinates.x >= indentedLeft - 8) {
+            return [collision];
+        }
+    }
+
+    return collisions.length > 0 ? [collisions[0]] : pointerCollisions;
+};
+
+const LayoutDragOverlay = () => {
+    const { active } = useDndContext();
+    if (!active) return null;
+
+    if (active.id.toString().startsWith('palette-')) {
+        const component = active.data.current?.component;
+        if (!component) return null;
+        return (
+            <div style={{
+                padding: '8px 16px',
+                background: '#141414',
+                color: '#fff',
+                border: '1px solid #434343',
+                borderRadius: 6,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 14,
+                fontWeight: 500,
+                opacity: 0.9,
+                cursor: 'grabbing'
+            }}>
+                {component.icon && <SVG src={component.icon} style={{ width: 16, height: 16 }} />}
+                <span>{component.displayName || component.name}</span>
+            </div>
+        );
+    }
+    
+    return (
+            <div style={{
+                padding: '8px 16px',
+                background: 'rgba(24, 144, 255, 0.2)',
+                border: '1px dashed #1890ff',
+                color: '#1890ff',
+                borderRadius: 6,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                fontSize: 14,
+                fontWeight: 500,
+                opacity: 0.9,
+                cursor: 'grabbing'
+            }}>
+                {active.data.current?.title || 'Moving Component'}
+            </div>
+        );
+};
 
 export const LayoutEditorProvider = ({
     children, layout,
@@ -82,53 +200,59 @@ export const LayoutEditorProvider = ({
             // If dropping palette item into a slot
             if (active.id.toString().startsWith('palette-')) {
                  const componentDef = active.data.current?.component;
-                 const { parentId, slotName, index } = over.data.current || {};
-                 if (componentDef && parentId && slotName) {
-                     handleAddComponent(parentId, slotName, { component: componentDef.name }, index);
+                 let targetParentId = over.data.current?.parentId;
+                 let targetSlot = over.data.current?.slotName;
+                 let targetIndex = over.data.current?.index;
+
+                 if (targetParentId && targetSlot) {
+                     if (targetIndex !== undefined) {
+                         const overRect = over.rect;
+                         if (overRect) {
+                             const overCenterY = overRect.top + overRect.height / 2;
+                             if (globalMousePos.y > overCenterY) {
+                                 targetIndex += 1;
+                             }
+                         }
+                     }
+                     handleAddComponent(targetParentId, targetSlot, { component: componentDef.name }, targetIndex);
                  }
             } else {
                  // Moving existing component
                 const update = (prev: ILayoutComponent | null) => {
                     if (!prev) return null;
                     const movedId = active.id;
-                    const component = findComponent(prev, movedId);
+                    const component = findComponent(prev, movedId.toString());
                     if (!component) return prev;
 
-                    const sourceInfo = findParent(prev, movedId);
-
                     // Remove from old location
-                    const tempLayout = removeComponent(prev, movedId);
+                    const tempLayout = removeComponent(prev, movedId.toString());
                     if (!tempLayout) return prev;
 
                     let targetParentId: string | undefined;
                     let targetSlot: string | undefined;
                     let targetIndex: number | undefined;
 
-                    // Case 1: Dropped on a Slot (container)
-                    if (over.data.current && over.data.current.parentId && over.data.current.slotName) {
-                        targetParentId = over.data.current.parentId;
-                        targetSlot = over.data.current.slotName;
-                        targetIndex = over.data.current.index;
-
-                        if (
-                            sourceInfo &&
-                            targetIndex !== undefined &&
-                            sourceInfo.parent.id === targetParentId &&
-                            sourceInfo.slotName === targetSlot &&
-                            sourceInfo.index < targetIndex
-                        ) {
-                            targetIndex -= 1;
-                        }
+                    // Dropped on a Slot (empty container)
+                    if (over.id.toString().includes(':')) {
+                        targetParentId = over.data.current?.parentId;
+                        targetSlot = over.data.current?.slotName;
+                        targetIndex = 0;
                     } 
-                    // Case 2: Dropped on another Component
+                    // Dropped on another Component
                     else {
-                        // We need to find the parent of the 'over' item in the NEW layout (after removal)
-                        // to get the correct index.
-                        const parentInfo = findParent(tempLayout, over.id);
+                        const parentInfo = findParent(tempLayout, over.id.toString());
                         if (parentInfo) {
                             targetParentId = parentInfo.parent.id;
                             targetSlot = parentInfo.slotName;
                             targetIndex = parentInfo.index;
+
+                            const overRect = over.rect;
+                            if (overRect) {
+                                const overCenterY = overRect.top + overRect.height / 2;
+                                if (globalMousePos.y > overCenterY) {
+                                    targetIndex += 1;
+                                }
+                            }
                         }
                     }
 
@@ -136,14 +260,14 @@ export const LayoutEditorProvider = ({
                         return addComponent(tempLayout, targetParentId, targetSlot, component, targetIndex);
                     }
 
-                    return prev; // Fallback if target not found
+                    return prev;
                 };
                 
                 const newLayout = layout && layout.component ? update(layout) : null;
                 onChange(newLayout);
             }
         }
-    }, [layout, handleAddComponent]);
+    }, [layout, handleAddComponent, onChange]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -166,8 +290,21 @@ export const LayoutEditorProvider = ({
         removeComponent: handleRemoveComponent,
         updateComponent: handleUpdateComponent,
     }}>
-        <DndContext onDragEnd={handleDragEnd} sensors={sensors} collisionDetection={pointerWithin}>
+        <DndContext 
+            onDragEnd={handleDragEnd} 
+            sensors={sensors} 
+            collisionDetection={customCollisionDetection}
+            measuring={{
+                droppable: {
+                    measure: customMeasure
+                }
+            }}
+        >
             {children}
+            <DropIndicatorOverlay />
+            <DragOverlay dropAnimation={null} zIndex={999999}>
+                <LayoutDragOverlay />
+            </DragOverlay>
         </DndContext>
     </LayoutEditorContext.Provider>
 
@@ -256,7 +393,7 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
                             );
                         }
                         return null;
-                    })() : <div ref={setNodeRef} className={clsx(classes.rootDropTarget, { [classes.active]: isOver })}>
+                    })() : <div ref={setNodeRef} data-layout-id="root-layout" className={clsx(classes.rootDropTarget, { [classes.active]: isOver })}>
                         Drop a component here to start
                     </div>}
                 </ConfigProvider>
