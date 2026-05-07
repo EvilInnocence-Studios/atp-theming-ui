@@ -7,6 +7,7 @@ export const themeServices = memoize(({ get, post, patch, remove }: IMethods) =>
     theme: {
         search: (): Promise<ITheme[]> => get(`theme`).then(getResults),
         get: (id: string): Promise<ITheme> => get(`theme/${id}`).then(getResults),
+        preview: (id: string): Promise<ITheme> => get(`theme/${id}?cacheBust=${Math.random()}`).then(getResults),
         create: (theme: NewTheme): Promise<ITheme> => post(`theme`, theme).then(getResults),
         update: (id: string, value: Partial<ITheme>): Promise<ITheme> => patch(`theme/${id}`, value),
         remove: (id: string) => remove(`theme/${id}`),
