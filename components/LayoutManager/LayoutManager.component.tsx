@@ -1,9 +1,10 @@
+import { config } from "@config";
 import { Editable } from "@core/components/Editable";
 import { Label } from "@core/components/Label";
 import { overridable } from "@core/lib/overridable";
 import { faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Col, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import { GlobalStyleEditor } from "../GlobalStyleEditor";
 import { LayoutEditor, LayoutEditorProvider } from "./LayoutEditor";
 import { LayoutElementSelect } from "./LayoutEditor/LayoutElementSelect";
@@ -15,21 +16,24 @@ export const LayoutManagerComponent = overridable(({
     classes = styles,
 }:LayoutManagerProps) => <div className={classes.layoutManager}>
     <Row gutter={[16,16]}>
-        <Col span={4}>
+        <Col span={5}>
             <h1>
                 <FontAwesomeIcon icon={faPaintRoller} /> Theme Designer
             </h1>
         </Col>
-        <Col span={6}>
+        <Col span={5}>
             <LayoutElementSelect
                 theme={theme}
                 selectedElement={element}
                 onSelect={setElement}
             />
         </Col>
-        <Col span={8}>
+        <Col span={8} style={{textAlign: "right"}}>
             {theme && updater && <Label label="Theme Name"><Editable value={theme.name || ""} onChange={updater.updateString("name")} /></Label>}
             <GlobalStyleEditor theme={theme} updater={updater} />
+            <Button type="link" href={`${config().public.baseUrl}?themeId=${theme?.id}`} target="_blank">
+                Preview Live
+            </Button>
         </Col>
         <Col span={6}>
             <div className={classes.header}>

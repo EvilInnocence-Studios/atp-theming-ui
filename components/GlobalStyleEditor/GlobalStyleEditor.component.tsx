@@ -534,7 +534,7 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
     `;
 
     return <>
-        <Button onClick={() => setOpen(true)}><FontAwesomeIcon icon={faPalette} /> Global Style Editor</Button>
+        <Button onClick={() => setOpen(true)}><FontAwesomeIcon icon={faPalette} /> Edit Global Styles</Button>
         <Modal
             title={
                 <div
