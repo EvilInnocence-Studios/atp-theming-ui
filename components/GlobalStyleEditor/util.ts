@@ -1,4 +1,5 @@
-import { IStyleVar } from "../Style/Style";
+import { ITheme } from "@theming-shared/theme/types";
+import { IStyleFont, IStyleVar } from "../Style/Style";
 
 export const titleCaseWords = (input:string) => input
     .split('-')
@@ -16,9 +17,12 @@ export const scales = (vars:IStyleVar[]) =>
 
 export const stops = [...tintStops.map(s => s[0]), ...shadeStops.map(s => s[0])];
 
-export const generateCss = (vars:IStyleVar[]) => {
+export const generateCss = (theme:ITheme | null, fonts:IStyleFont[]) => {
+    const globalStyles = theme?.globalStyles;
+    const vars = globalStyles?.variables ?? [];
+    const {css} = globalStyles ?? {};
     const colors = vars.filter(v => v.type === 'color' && !['white', 'black'].includes(v.name)).map(v => v.name);
-
+    
     const cssText = `
         ${vars.map((v: IStyleVar) => `--${v.name}: ${v.value};`).join("\n")}
 
@@ -81,6 +85,16 @@ export const generateCss = (vars:IStyleVar[]) => {
         --duration-fast: 150ms;
         --duration-normal: 250ms;
         --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+        /* === FONTS === */
+        ${fonts.map((f) => `@font-face {
+            font-family: '${f.name}';
+            src: url('${f.url}');
+            font-weight: ${f.weight};
+            font-style: ${f.style};
+        }`).join("\n")}
+
+        ${css}
     `;
 
     return cssText;
