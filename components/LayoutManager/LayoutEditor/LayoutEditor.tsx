@@ -4,7 +4,7 @@ import { ITheme } from "@theming-shared/theme/types";
 import { DropIndicatorOverlay } from "@theming/components/SlotRenderer/DropIndicatorOverlay";
 import { SelectableItem } from "@theming/components/SlotRenderer/SlotRenderer.component";
 import slotStyles from "@theming/components/SlotRenderer/SlotRenderer.module.scss";
-import { IStyleVar } from "@theming/components/Style/Style.d";
+import { IStyleFont, IStyleVar } from "@theming/components/Style/Style.d";
 import { ComponentRegistry } from "@theming/lib/layout/componentRegistry";
 import { LayoutEditorContext, useLayoutEditor } from "@theming/lib/layout/context";
 import { ILayoutComponent } from "@theming/lib/layout/layout";
@@ -20,6 +20,9 @@ import { ComponentLibrary } from "../ComponentLibrary.component";
 import { JsonLayoutDisplay } from "../JsonLayoutDisplay.component";
 import { PropertyPanel } from "../PropertyPanel";
 import defaultClasses from './LayoutEditor.module.scss';
+import { generateCss } from "@theming/components/GlobalStyleEditor/util";
+import { loadFonts } from "@theming/components/Layout/Layout.container";
+import { useSetting } from "@common/lib/setting/services";
 
 export declare interface ILayoutEditorProviderProps {
     children: React.ReactNode;
@@ -312,7 +315,14 @@ export const LayoutEditorProvider = ({
 
 export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: ITheme | null, classes?: any }) => {
     const { layout, isEditing, showJson, selectedId, selectComponent, removeComponent, updateComponent } = useLayoutEditor();
-    
+    const [fonts, setFonts] = useState<IStyleFont[]>([]);
+    const imgHost = useSetting("imageHost");
+    const imgFolder = useSetting("mediaImageFolder");
+
+    useEffect(() => {
+        loadFonts(theme, imgHost, imgFolder).then(fonts => setFonts(fonts));
+    }, [theme, imgHost, imgFolder]);
+
     const { setNodeRef, isOver } = useDroppable({
         id: 'root-layout',
         disabled: !!layout && !!layout.component,
@@ -386,6 +396,9 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
                                         classes={slotStyles} // Use SlotRenderer styles for the item
                                         className={clsx(slotStyles.item, "layout-editor-canvas")}
                                     >
+                                        <style>
+                                            {generateCss(theme, fonts)}
+                                        </style>
                                         {rootContent}
                                     </SelectableItem>
                                     <JsonLayoutDisplay layout={layout} showJson={showJson} />
