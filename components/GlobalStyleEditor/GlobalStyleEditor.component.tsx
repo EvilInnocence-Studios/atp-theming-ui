@@ -4,10 +4,10 @@ import { Editable } from "@core/components/Editable";
 import { Label } from "@core/components/Label";
 import { services } from "@core/lib/api";
 import { overridable } from "@core/lib/overridable";
-import { faPalette } from "@fortawesome/free-solid-svg-icons";
+import { faPalette, faTimes, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Editor from "@monaco-editor/react";
-import { Button, Col, ColorPicker, Modal, Row, Select, Space, Tabs, Typography } from "antd";
+import { Button, Card, Col, ColorPicker, Row, Select, Space, Tabs, Typography } from "antd";
 import { debounce } from "lodash";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
@@ -187,6 +187,8 @@ const anyColorToHex = (str: string) => {
 
 export const GlobalStyleEditorComponent = overridable(({classes = styles, theme, updater}:GlobalStyleEditorProps) => {
     const [open, setOpen] = useState(false);
+    const [collapsedTabs, setCollapsedTabs] = useState(false);
+    const [collapsedScss, setCollapsedScss] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [computedColors, setComputedColors] = useState<Record<string, string>>({});
     const [activeTab, setActiveTab] = useState("colors");
@@ -400,36 +402,34 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
 
     return <>
         <Button onClick={() => setOpen(true)}><FontAwesomeIcon icon={faPalette} /> Edit Global Styles</Button>
-        <Modal
-            title={
-                <div
-                    style={{ width: '100%', cursor: 'move' }}
-                    onMouseOver={() => { if (disabledTabs) setDisabledTabs(false); }}
-                    onMouseOut={() => { setDisabledTabs(true); }}
-                >
-                    Global Style Editor - Tokens
-                </div>
-            }
-            open={open}
-            onCancel={() => setOpen(false)}
-            footer={null}
-            width={400}
-            className={classes.globalStyleModal}
-            destroyOnClose={false}
-            mask={false}
-            maskClosable={false}
-            wrapClassName={classes.globalStyleModalWrap}
-            style={{ margin: 0, top: 40, left: 40, position: 'absolute' }}
-            modalRender={(modal) => (
+        {open && (
+            <>
                 <Draggable disabled={disabledTabs} bounds={boundsTabs} nodeRef={draggleRefTabs} onStart={(event, uiData) => onStartTabs(event, uiData)}>
-                    <div ref={draggleRefTabs}>{modal}</div>
-                </Draggable>
-            )}
-        >
-            <style>{cssText}</style>
-            <div className={classes.editorLayout} style={{ height: '75vh', display: 'flex', flexDirection: 'column' }}>
-                <div ref={containerRef} className="global-style-editor-preview-container" style={{ flex: 1, overflow: 'hidden' }}>
-                        <Tabs activeKey={activeTab} onChange={setActiveTab} tabPosition="top">
+                    <div ref={draggleRefTabs} className={classes.floatingWindow} style={{ margin: 0, top: 40, left: 40, position: 'fixed', width: 400, zIndex: 1050 }}>
+                        <Card
+                            size="small"
+                            title={
+                                <div
+                                    style={{ width: '100%', cursor: 'move' }}
+                                    onMouseOver={() => { if (disabledTabs) setDisabledTabs(false); }}
+                                    onMouseOut={() => { setDisabledTabs(true); }}
+                                >
+                                    Global Style Editor - Tokens
+                                </div>
+                            }
+                            extra={
+                                <Space>
+                                    <Button type="text" size="small" onClick={() => setCollapsedTabs(!collapsedTabs)} icon={<FontAwesomeIcon icon={collapsedTabs ? faPlus : faMinus} />} />
+                                    <Button type="text" size="small" onClick={() => setOpen(false)} icon={<FontAwesomeIcon icon={faTimes} />} />
+                                </Space>
+                            }
+                            styles={{ body: { padding: 16, height: collapsedTabs ? 0 : '75vh', display: collapsedTabs ? 'none' : 'flex', flexDirection: 'column' } }}
+                            style={{ height: collapsedTabs ? 'auto' : '100%', display: 'flex', flexDirection: 'column', boxShadow: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)' }}
+                        >
+                            <style>{cssText}</style>
+                            <div className={classes.editorLayout} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <div ref={containerRef} className="global-style-editor-preview-container" style={{ flex: 1, overflow: 'hidden' }}>
+                                    <Tabs activeKey={activeTab} onChange={setActiveTab} tabPosition="top" style={{ height: '100%' }}>
                             <Tabs.TabPane key="colors" tab="Colors">
                                 <Button onClick={addBaseVariables} block style={{ marginBottom: 16 }}>
                                     Add Standard Base Variables
@@ -668,39 +668,37 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
                                     ))}
                                 </Space>
                             </Tabs.TabPane>
-                        </Tabs>
-                </div>
-            </div>
-        </Modal>
-
-        <Modal
-            title={
-                <div
-                    style={{ width: '100%', cursor: 'move' }}
-                    onMouseOver={() => { if (disabledScss) setDisabledScss(false); }}
-                    onMouseOut={() => { setDisabledScss(true); }}
-                >
-                    Global Style Editor - SCSS
-                </div>
-            }
-            open={open}
-            onCancel={() => setOpen(false)}
-            footer={null}
-            width={400}
-            className={classes.globalStyleModal}
-            destroyOnClose={false}
-            mask={false}
-            maskClosable={false}
-            wrapClassName={classes.globalStyleModalWrap}
-            style={{ margin: 0, top: 40, right: 40, position: 'absolute' }}
-            modalRender={(modal) => (
-                <Draggable disabled={disabledScss} bounds={boundsScss} nodeRef={draggleRefScss} onStart={(event, uiData) => onStartScss(event, uiData)}>
-                    <div ref={draggleRefScss}>{modal}</div>
+                                    </Tabs>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
                 </Draggable>
-            )}
-        >
-            <div className={classes.editorLayout} style={{ height: '75vh', display: 'flex', flexDirection: 'column' }}>
-                <div style={{ flex: 1, border: '1px solid #d9d9d9', borderRadius: 6, overflow: 'hidden' }}>
+
+                <Draggable disabled={disabledScss} bounds={boundsScss} nodeRef={draggleRefScss} onStart={(event, uiData) => onStartScss(event, uiData)}>
+                    <div ref={draggleRefScss} className={classes.floatingWindow} style={{ margin: 0, top: 40, right: 40, position: 'fixed', width: 600, zIndex: 1050 }}>
+                        <Card
+                            size="small"
+                            title={
+                                <div
+                                    style={{ width: '100%', cursor: 'move' }}
+                                    onMouseOver={() => { if (disabledScss) setDisabledScss(false); }}
+                                    onMouseOut={() => { setDisabledScss(true); }}
+                                >
+                                    Global Style Editor - SCSS
+                                </div>
+                            }
+                            extra={
+                                <Space>
+                                    <Button type="text" size="small" onClick={() => setCollapsedScss(!collapsedScss)} icon={<FontAwesomeIcon icon={collapsedScss ? faPlus : faMinus} />} />
+                                    <Button type="text" size="small" onClick={() => setOpen(false)} icon={<FontAwesomeIcon icon={faTimes} />} />
+                                </Space>
+                            }
+                            styles={{ body: { padding: 16, height: collapsedScss ? 0 : '75vh', display: collapsedScss ? 'none' : 'flex', flexDirection: 'column' } }}
+                            style={{ height: collapsedScss ? 'auto' : '100%', display: 'flex', flexDirection: 'column', boxShadow: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)' }}
+                        >
+                            <div className={classes.editorLayout} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ flex: 1, border: '1px solid #d9d9d9', borderRadius: 6, overflow: 'hidden' }}>
                     <Editor
                         language="scss"
                         value={sass}
@@ -713,8 +711,12 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
                             wordWrap: 'on'
                         }}
                     />
-                </div>
-            </div>
-        </Modal>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
+                </Draggable>
+            </>
+        )}
     </>;
 });
