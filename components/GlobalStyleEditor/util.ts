@@ -17,7 +17,7 @@ export const scales = (vars:IStyleVar[]) =>
 
 export const stops = [...tintStops.map(s => s[0]), ...shadeStops.map(s => s[0])];
 
-export const generateCss = (theme:ITheme | null, fonts:IStyleFont[]) => {
+export const generateCss = (theme:ITheme | null, fonts:IStyleFont[] = []) => {
     const globalStyles = theme?.globalStyles;
     const vars = globalStyles?.variables ?? [];
     const {css} = globalStyles ?? {};

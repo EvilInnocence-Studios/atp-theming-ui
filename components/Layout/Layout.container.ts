@@ -11,7 +11,7 @@ import { ILayoutInputProps, ILayoutProps, LayoutProps } from "./Layout.d";
 import { ITheme } from "@theming-shared/theme/types";
 import { memoizePromise } from "ts-functional";
 
-const loadFonts = memoizePromise((theme:ITheme | null, imgHost:string | null, imgFolder:string | null):Promise<IStyleFont[]> => {
+export const loadFonts = memoizePromise((theme:ITheme | null, imgHost:string | null, imgFolder:string | null):Promise<IStyleFont[]> => {
     if (!theme) return Promise.resolve([]);
 
     if (!imgHost || !imgFolder) return Promise.resolve([]);
@@ -36,7 +36,7 @@ const loadFonts = memoizePromise((theme:ITheme | null, imgHost:string | null, im
         })
     );
 }, {keyGen: ([theme, imgHost, imgFolder]:[ITheme | null, string | null, string | null]):string =>
-    `${theme?.id ?? 'null'}|${imgHost ?? 'null'}|${imgFolder ?? 'null'}`
+    `${JSON.stringify(theme)}|${imgHost ?? 'null'}|${imgFolder ?? 'null'}`
 });
 
 const injectLayoutProps = createInjector(<Context>({ element }: ILayoutInputProps): ILayoutProps<Context> => {
