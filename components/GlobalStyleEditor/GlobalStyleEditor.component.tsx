@@ -394,7 +394,7 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
 
     const cssText = `
         .global-style-editor-preview-container {
-            ${generateCss(vars)}
+            ${generateCss(theme, fonts)}
         }
     `;
 
