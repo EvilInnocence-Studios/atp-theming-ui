@@ -42,10 +42,12 @@ export const DropIndicatorOverlay = () => {
         if (!container) return;
 
         if (cacheRef.current?.overId !== over.id) {
-            const isSlot = over.id.toString().includes(':'); 
+            const overIdStr = over.id.toString();
+            const isEdgeSentinel = overIdStr.includes(':edge-'); 
+            const isSlot = overIdStr.includes(':') && !isEdgeSentinel; 
             let node: HTMLElement | null = null;
             
-            if (isSlot) {
+            if (isSlot || isEdgeSentinel) {
                 node = document.querySelector(`[data-slot-id="${over.id}"]`) as HTMLElement;
             } else {
                 node = document.querySelector(`[data-layout-id="${over.id}"]`) as HTMLElement;
@@ -70,7 +72,7 @@ export const DropIndicatorOverlay = () => {
             let targetParentId: string | undefined;
             let targetSlot: string | undefined;
 
-            if (isSlot) {
+            if (isSlot || isEdgeSentinel) {
                 targetParentId = over.data.current?.parentId;
                 targetSlot = over.data.current?.slotName;
             } else if (layout && layout.component) {
@@ -97,6 +99,7 @@ export const DropIndicatorOverlay = () => {
             cacheRef.current = {
                 overId: over.id,
                 isSlot,
+                isEdgeSentinel,
                 observable,
                 depth,
                 indentation,
@@ -131,6 +134,17 @@ export const DropIndicatorOverlay = () => {
                 setIndicatorState(prev => {
                     if (prev && prev.top === top && prev.left === left && prev.width === width && prev.opacity === 0.2) return prev;
                     return { top, left, width, height, opacity: 0.2, tooltipText: cache.tooltipText };
+                });
+            } else if (cache.isEdgeSentinel) {
+                // Edge sentinel: render as a 4px insertion line at the center of the sentinel
+                top = (nodeRect.top + nodeRect.height / 2) - cache.containerRect.top + cache.container.scrollTop - 2;
+                left = (nodeRect.left - cache.containerRect.left) + cache.container.scrollLeft;
+                width = nodeRect.width;
+                height = 4;
+
+                setIndicatorState(prev => {
+                    if (prev && prev.top === top && prev.left === left && prev.width === width && prev.opacity === 1) return prev;
+                    return { top, left, width, height, opacity: 1, tooltipText: cache.tooltipText };
                 });
             } else {
                 // Determine if dropping before or after based on mouse Y relative to the node's center
