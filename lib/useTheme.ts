@@ -17,6 +17,24 @@ const getTheme = memoizePromise((id:string, preview: boolean = false) => {
 const useCurrentId = useSharedState<string>("");
 const useCurrentTheme = useSharedState<ITheme | null>(null);
 
+// TODO: Integrate theme switcher bug fix
+/*
+export const useLayoutTheme = () => {
+    const defaultThemeId = useSetting("defaultThemeId");
+    const [currentThemeId, setCurrentThemeId] = useCurrentThemeId();
+    const [themes, setThemes] = useState<ITheme[]>([]);
+
+    useEffect(() => {
+        getThemes().then(setThemes);
+    }, []);
+
+    return {
+        theme: themes.find(t => !!currentThemeId ? t.id === currentThemeId : t.id === defaultThemeId),
+        onChange: setCurrentThemeId,
+    };
+}
+*/
+
 export const useLayoutTheme = () => {
     const defaultThemeId = useSetting("defaultThemeId");
     const [currentThemeId, setCurrentThemeId] = useCurrentId();
