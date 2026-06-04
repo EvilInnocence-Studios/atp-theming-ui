@@ -1,4 +1,4 @@
-.globalStyleModal {
+.floatingWindow {
     :global {
         * {
             scrollbar-width: thin;
@@ -22,25 +22,12 @@
             }
         }
 
-        .ant-modal-content {
-            display: flex;
-            flex-direction: column;
-            max-height: 50vh;
-            position: relative;
-        }
-        .ant-modal-body {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        
         .ant-tabs-nav {
             margin-bottom: 16px;
         }
 
         .ant-tabs {
-            height: calc(50vh - 78px);
+            height: 100%;
             display: flex;
             flex-direction: column;
             
@@ -56,14 +43,6 @@
                 height: 100%;
             }
         }
-    }
-}
-
-.globalStyleModalWrap {
-    pointer-events: none;
-    
-    :global(.ant-modal) {
-        pointer-events: auto;
     }
 }
 

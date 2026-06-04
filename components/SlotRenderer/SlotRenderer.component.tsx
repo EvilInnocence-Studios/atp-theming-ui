@@ -13,6 +13,41 @@ import { LayoutFixedContext, useLayoutEditor, useLayoutFixed } from "@theming/li
 import React, { createContext, useContext, useState } from "react";
 import { SlotItemOverlay } from "./SlotItemOverlay";
 
+/** Invisible sentinel droppable placed before/after items in a populated slot */
+const SlotEdgeDropZone = ({
+    parentId,
+    slotName,
+    index,
+    depth,
+}: {
+    parentId: string;
+    slotName: string;
+    index: number;
+    depth: number;
+}) => {
+    // Use a compound id that still includes ":" so DropIndicatorOverlay treats it as a slot drop
+    const id = `${parentId}:${slotName}:edge-${index}`;
+    const { setNodeRef, isOver } = useDroppable({
+        id,
+        data: { parentId, slotName, index, depth, isEdge: true },
+    });
+    return (
+        <div
+            ref={setNodeRef}
+            data-slot-id={id}
+            style={{
+                height: 12,
+                width: '100%',
+                flexShrink: 0,
+                backgroundColor: isOver ? 'rgba(24,144,255,0.25)' : 'transparent',
+                transition: 'background-color 0.1s',
+                zIndex: 10,
+                position: 'relative',
+            }}
+        />
+    );
+};
+
 export const DepthContext = createContext<number>(0);
 export const useDepth = () => useContext(DepthContext);
 
@@ -261,19 +296,21 @@ export const SlotRendererComponent = overridable(({
                 width: (!hasItems) ? '100%' : undefined,
                 textAlign: (!hasItems) ? 'center' : undefined,
             }}
-            // If empty, we attach ref here. If not empty, we attach ref to the filler.
-            ref={(node) => {
-                if (!hasItems) {
-                    setNodeRef(node);
-                }
-            }}
+            // Always register the slot wrapper as the droppable ref
+            ref={setNodeRef}
         >
             <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+                {hasItems && parentId && slotName && (
+                    <SlotEdgeDropZone parentId={parentId} slotName={slotName} index={0} depth={depth} />
+                )}
                 {content.map((child, index) => (
                     <React.Fragment key={`slot-item-${index}`}>
                         {child}
                     </React.Fragment>
                 ))}
+                {hasItems && parentId && slotName && (
+                    <SlotEdgeDropZone parentId={parentId} slotName={slotName} index={slots!.length} depth={depth} />
+                )}
             </SortableContext>
             
             {!hasItems && !isFixed && (

@@ -206,9 +206,11 @@ export const LayoutEditorProvider = ({
                  let targetParentId = over.data.current?.parentId;
                  let targetSlot = over.data.current?.slotName;
                  let targetIndex = over.data.current?.index;
+                 const isEdgeDrop = !!over.data.current?.isEdge;
 
                  if (targetParentId && targetSlot) {
-                     if (targetIndex !== undefined) {
+                     // Edge sentinels carry an exact index — skip the center-Y heuristic
+                     if (!isEdgeDrop && targetIndex !== undefined) {
                          const overRect = over.rect;
                          if (overRect) {
                              const overCenterY = overRect.top + overRect.height / 2;
@@ -235,11 +237,12 @@ export const LayoutEditorProvider = ({
                     let targetSlot: string | undefined;
                     let targetIndex: number | undefined;
 
-                    // Dropped on a Slot (empty container)
+                    // Dropped on a Slot or edge sentinel (id contains ":")
                     if (over.id.toString().includes(':')) {
                         targetParentId = over.data.current?.parentId;
                         targetSlot = over.data.current?.slotName;
-                        targetIndex = 0;
+                        // Use explicit index from data (edge sentinels have it; empty-slot drops default to 0)
+                        targetIndex = over.data.current?.index ?? 0;
                     } 
                     // Dropped on another Component
                     else {
