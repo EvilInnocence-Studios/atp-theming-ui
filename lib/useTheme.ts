@@ -3,64 +3,41 @@ import { services } from "@core/lib/api";
 import { ITheme } from "@theming-shared/theme/types";
 import { IStyleVar } from "@theming/components/Style/Style";
 import { ThemeConfig, theme as antTheme } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { memoizePromise } from "ts-functional";
 import { Index } from "ts-functional/dist/types";
 import { useSharedState } from "unstateless";
 
-const getTheme = memoizePromise((id:string, preview: boolean = false) => {
-    const load = preview ? services().theme.preview : services().theme.get;
-    return load(id);
-}, {});
+const getThemes = memoizePromise(() => services().theme.search(), {});
 
-const useCurrentId = useSharedState<string>("");
-const useCurrentTheme = useSharedState<ITheme | null>(null);
+const useCurrentThemeId = useSharedState<string>("");
+const usePreviewTheme = useSharedState<boolean>(false);
 
-// TODO: Integrate theme switcher bug fix
-/*
 export const useLayoutTheme = () => {
     const defaultThemeId = useSetting("defaultThemeId");
     const [currentThemeId, setCurrentThemeId] = useCurrentThemeId();
+    const [preview, setIsPreview] = usePreviewTheme();
     const [themes, setThemes] = useState<ITheme[]>([]);
+    const [query] = useSearchParams();
+    const themeFromQuery = query.get("themeId");
 
     useEffect(() => {
         getThemes().then(setThemes);
     }, []);
 
+    useEffect(() => {
+        if(themeFromQuery) {
+            setIsPreview(true);
+            setCurrentThemeId(themeFromQuery);
+        }
+    }, [themeFromQuery]);
+
     return {
-        theme: themes.find(t => !!currentThemeId ? t.id === currentThemeId : t.id === defaultThemeId),
+        theme: themes.find(t => !!currentThemeId ? t.id === currentThemeId : t.id === defaultThemeId) || null,
+        preview,
         onChange: setCurrentThemeId,
     };
-}
-*/
-
-export const useLayoutTheme = () => {
-    const defaultThemeId = useSetting("defaultThemeId");
-    const [currentThemeId, setCurrentThemeId] = useCurrentId();
-    const [theme, setTheme] = useCurrentTheme();
-    const [query] = useSearchParams();
-    const themeFromQuery = query.get("themeId");
-
-    useEffect(() => {
-        console.log("Using theme", defaultThemeId, themeFromQuery);
-        let id = defaultThemeId;
-        if(themeFromQuery) {
-            console.log("Using theme from query", themeFromQuery);
-            id = themeFromQuery;
-        }
-        if(id && !currentThemeId) {
-            setCurrentThemeId(id);
-        }
-    }, [defaultThemeId, themeFromQuery]);
-    
-    useEffect(() => {
-        if (!currentThemeId) return;
-        console.log("Loading theme", currentThemeId, !!themeFromQuery);
-        getTheme(currentThemeId, !!themeFromQuery).then(setTheme);
-    }, [currentThemeId]);
-    
-    return { theme, onChange: setCurrentThemeId, preview: !!themeFromQuery };
 }
 
 export const useTheme = (_vars:Index<IStyleVar>) => {
