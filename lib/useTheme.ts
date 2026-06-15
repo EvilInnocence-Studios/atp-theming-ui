@@ -9,7 +9,7 @@ import { memoizePromise } from "ts-functional";
 import { Index } from "ts-functional/dist/types";
 import { useSharedState } from "unstateless";
 
-const getThemes = memoizePromise(() => services().theme.search(), {});
+const getThemes = memoizePromise(() => services().theme.preview(), {});
 
 const useCurrentThemeId = useSharedState<string>("");
 const usePreviewTheme = useSharedState<boolean>(false);
