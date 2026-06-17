@@ -405,7 +405,7 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
         {open && (
             <>
                 <Draggable disabled={disabledTabs} bounds={boundsTabs} nodeRef={draggleRefTabs} onStart={(event, uiData) => onStartTabs(event, uiData)}>
-                    <div ref={draggleRefTabs} className={classes.floatingWindow} style={{ margin: 0, top: 40, left: 40, position: 'fixed', width: 400, zIndex: 1050 }}>
+                    <div ref={draggleRefTabs} className={classes.floatingWindow} style={{ margin: 0, top: 40, left: 40, position: 'fixed', width: 400, zIndex: 1020 }}>
                         <Card
                             size="small"
                             title={
@@ -676,7 +676,7 @@ export const GlobalStyleEditorComponent = overridable(({classes = styles, theme,
                 </Draggable>
 
                 <Draggable disabled={disabledScss} bounds={boundsScss} nodeRef={draggleRefScss} onStart={(event, uiData) => onStartScss(event, uiData)}>
-                    <div ref={draggleRefScss} className={classes.floatingWindow} style={{ margin: 0, top: 40, right: 40, position: 'fixed', width: 600, zIndex: 1050 }}>
+                    <div ref={draggleRefScss} className={classes.floatingWindow} style={{ margin: 0, top: 40, right: 40, position: 'fixed', width: 600, zIndex: 1020 }}>
                         <Card
                             size="small"
                             title={
