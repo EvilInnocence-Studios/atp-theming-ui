@@ -10,7 +10,7 @@ export const tintStops = [[50, 90], [100, 80], [200, 65], [300, 50], [400, 30]] 
 export const shadeStops = [[600, 15], [700, 30], [800, 50], [900, 70]] as const;
 
 export const scales = (vars:IStyleVar[]) => 
-    vars.filter(v => v.type === 'color' && !['white', 'black'].includes(v.name)).map(v => ({
+    vars.filter(v => v.type === 'color' && !['white', 'black'].includes(v.name) && !v.name.includes('.')).map(v => ({
         name: titleCaseWords(v.name),
         prefix: v.name
     }));
@@ -19,7 +19,7 @@ export const stops = [...tintStops.map(s => s[0]), ...shadeStops.map(s => s[0])]
 
 export const generateCss = (theme:ITheme | null, fonts:IStyleFont[] = []) => {
     const globalStyles = theme?.globalStyles;
-    const vars = globalStyles?.variables ?? [];
+    const vars = (globalStyles?.variables ?? []).filter((v: IStyleVar) => !v.name.includes('.'));
     const {css} = globalStyles ?? {};
     const colors = vars.filter(v => v.type === 'color' && !['white', 'black'].includes(v.name)).map(v => v.name);
     

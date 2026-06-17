@@ -8,10 +8,10 @@ import styles from './ThemeSwitcherBar.module.scss';
 export const ThemeSwitcherBarComponent = overridable(({classes = styles, slots, __layoutId, className, css}:ThemeSwitcherBarProps) => <>
     {css && <style>{css}</style>}
     <div className={clsx(className, "themeSwitcherBar", classes.themeSwitcherBar)}>
-        <div className="extra">
+        <div className={clsx("extra", classes.extra)}>
             <SlotRenderer slots={slots?.extra} slotName="extra" parentId={__layoutId} />
         </div>
-        <div className="switcher">
+        <div className={clsx("switcher", classes.switcher)}>
             <span>Choose a theme: </span>
             <ThemeSwitcher />
         </div>

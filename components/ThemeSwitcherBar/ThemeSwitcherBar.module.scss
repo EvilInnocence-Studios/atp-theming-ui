@@ -7,18 +7,26 @@
     padding: 0.5rem 1rem;
     background-color: #888888;
     border-bottom: 1px solid #000000;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
 
     .extra {
         display: flex;
         align-items: center;
-        flex: 1;
+        flex: 1 1 auto;
     }
 
     .switcher {
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         flex-shrink: 0;
     }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+    }
+
     :global(.ant-select) {
         min-width: 200px;
     }
