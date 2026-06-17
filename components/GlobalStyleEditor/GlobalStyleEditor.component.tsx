@@ -18,7 +18,7 @@ import { generateCss, scales, stops } from "./util";
 
 const { Text } = Typography;
 
-const antColorValues: Record<string, string> = {
+export const antColorValues: Record<string, string> = {
     colorBgBase: '#fff',
     colorError: '#ff4d4f',
     colorInfo: '#1677ff',
@@ -42,12 +42,12 @@ const antColorValues: Record<string, string> = {
     gold: '#FAAD14',
 };
 
-const antColorTokens = Object.entries(antColorValues).map(([key, value]) => ({
+const antColorTokens = Object.entries(antColorValues).map(([key]) => ({
     value: key,
-    label: `${key} (${value})`
+    label: key,
 }));
 
-const antVariableValues: Record<string, string> = {
+export const antVariableValues: Record<string, string> = {
     borderRadius: '6',
     controlHeight: '32',
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
@@ -75,9 +75,9 @@ const antVariableValues: Record<string, string> = {
     zIndexPopupBase: '1000',
 };
 
-const antVariableTokens = Object.entries(antVariableValues).map(([key, value]) => ({
+const antVariableTokens = Object.entries(antVariableValues).map(([key]) => ({
     value: key,
-    label: `${key}${value.length < 20 ? ` (\${value})` : ''}`
+    label: key,
 }));
 
 const miscVarsGroups = [
