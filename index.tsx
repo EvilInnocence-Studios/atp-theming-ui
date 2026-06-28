@@ -1,6 +1,8 @@
 import { IModule } from "@core/lib/module";
 import { StandardLayout } from "@theming/components/StandardLayout";
 import { Container } from "./components/Container";
+import { DataField } from "./components/DataField";
+import { DataList } from "./components/DataList";
 import { MultiColumnLayout } from "./components/MultiColumnLayout";
 import { RouteTable } from "./components/RouteTable";
 import { Style } from "./components/Style";
@@ -35,6 +37,8 @@ ComponentRegistry.register(ThemeSwitcher);
 ComponentRegistry.register(ThemeSwitcherBar);
 ComponentRegistry.register(ThemeName);
 ComponentRegistry.register(ThemeDescription);
+ComponentRegistry.register(DataList);
+ComponentRegistry.register(DataField);
 
 LayoutRegistry.register({
     name: "layout",

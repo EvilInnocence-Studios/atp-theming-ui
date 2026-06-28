@@ -381,11 +381,13 @@ export const LayoutEditor = ({ theme, classes = defaultClasses }: { theme: IThem
                         />
                     )}
                     {layout && layout.component ? (() => {
-                        const Component = ComponentRegistry.get(layout.component)?.component;
+                        const componentDef = ComponentRegistry.get(layout.component);
+                        const layoutEditor = componentDef?.layoutEditor;
+                        const Component = (isEditing?.isset && layoutEditor) ? layoutEditor : componentDef?.component;
                         const __update = (key:string) => (value:any) => {
                             if (layout.id) updateComponent(layout.id, {props: {...layout.props, [key]: value }});
                         };
-                        const rootContent = Component ? <Component {...layout.props} slots={layout.slots} __layoutId={layout.id} css={layout.css} __update={__update} __isSelected={selectedId === layout.id} /> : null;
+                        const rootContent = Component ? <Component {...layout.props} slots={layout.slots} __layoutId={layout.id!} css={layout.css} __update={__update} __isSelected={selectedId === layout.id} /> : null;
                     
                         if (rootContent) {
                             return (
