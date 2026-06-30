@@ -5,7 +5,6 @@ export const DataListLayoutEditor:LayoutEditor = ({css, className, slots, __layo
     return <>
         {css && <style>{css}</style>}
         <div className={className}>
-            DataList layout editor goes here
             <SlotRenderer
                 slots={slots?.[`children`]}
                 parentId={__layoutId}

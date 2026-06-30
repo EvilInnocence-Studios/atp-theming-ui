@@ -7,4 +7,3 @@ export declare interface IDataListContext {
 }
 
 export const DataListContext = createContext<IDataListContext>({columns: [], row: {}});
-

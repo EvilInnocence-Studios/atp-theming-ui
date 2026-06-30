@@ -1,11 +1,15 @@
+import { Label } from "@core/components/Label";
 import { IDataFieldInputProps } from "./DataField.d";
+import { Editable } from "@core/components/Editable";
 
 export const DataFieldPropEditor = (
-    {}: IDataFieldInputProps,
-    updateProps: (props: any) => void,
+    {column}: IDataFieldInputProps,
+    _updateProps: (props: any) => void,
     updateProp: (prop: string) => (value: any) => void
 ) => {
     return <>
-        Placeholder Prop Editor for DataField
+        <Label label="Column">
+            <Editable onChange={updateProp("column")} value={column || ""} />
+        </Label>
     </>;
 }
