@@ -8,7 +8,6 @@ const {Provider} = DataListContext;
 export const DataListComponent = overridable(({slots, className, css, columns, data, __layoutId, name}:DataListProps) => <>
     {css && <style>{css}</style>}
     <div className={className}>
-        DataList component goes here.
         {(data || []).map((row, idx) => <>
             <Provider value={{columns: columns || [], row}} key={idx}>
                 <SlotRenderer
