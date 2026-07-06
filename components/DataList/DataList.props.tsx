@@ -78,12 +78,19 @@ export const DataListPropEditor = (
 
         switch (column.dataType) {
             case "markdown":
-                return (
-                    <MarkdownEditor
-                        value={value || ""}
-                        onChange={(val) => updateCell(rowIndex, colName, val)}
-                    />
-                );
+                return <>
+                    <style>
+                        .dataListMarkdownEditor .mdxeditor {"{"}
+                            max-width: 512px;
+                        {"}"}
+                    </style>
+                    <div className="dataListMarkdownEditor">
+                        <MarkdownEditor
+                            value={value || ""}
+                            onChange={(val) => updateCell(rowIndex, colName, val)}
+                        />
+                    </div>
+                </>;
             case "number":
                 return (
                     <InputNumber
