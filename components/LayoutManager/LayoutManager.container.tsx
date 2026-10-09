@@ -32,6 +32,13 @@ const injectLayoutManagerProps = createInjector(({ themeId }: ILayoutManagerInpu
         updater.updateObject("json")({...themeJson, [element]: layout});
     }
 
+    const onImportLayouts = (importedLayouts: Record<string, ILayoutComponent>) => {
+        updater.updateObject("json")({
+            ...themeJson,
+            ...importedLayouts,
+        });
+    };
+
     return {
         theme,
         updater,
@@ -39,6 +46,7 @@ const injectLayoutManagerProps = createInjector(({ themeId }: ILayoutManagerInpu
         setElement,
         layout,
         onChange,
+        onImportLayouts,
         UpdateButtons: updater.UpdateButtons,
     };
 });

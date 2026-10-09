@@ -9,12 +9,13 @@ export declare interface ILayoutManagerProps {
     setElement: (element: string) => void;
     layout: ILayoutComponent | null;
     onChange: (layout: ILayoutComponent | null) => void;
-    UpdateButtons: IUpdater<any>["UpdateButtons"];
+    onImportLayouts: (importedLayouts: Record<string, ILayoutComponent>) => void;
+    UpdateButtons: IUpdater<ITheme>["UpdateButtons"];
 }
 
 // What gets passed into the component from the parent as attributes
 export declare interface ILayoutManagerInputProps {
-    classes?: any;
+    classes?: Record<string, string>;
     themeId: string;
 }
 

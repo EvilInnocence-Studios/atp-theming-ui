@@ -4,19 +4,20 @@ import { Label } from "@core/components/Label";
 import { overridable } from "@core/lib/overridable";
 import { faPaintRoller } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row, Space } from "antd";
 import { GlobalStyleEditor } from "../GlobalStyleEditor";
 import { LayoutEditor, LayoutEditorProvider } from "./LayoutEditor";
 import { LayoutElementSelect } from "./LayoutEditor/LayoutElementSelect";
+import { LayoutImport } from "./LayoutImport";
 import { LayoutManagerProps } from "./LayoutManager.d";
 import styles from './LayoutManager.module.scss';
 
 export const LayoutManagerComponent = overridable(({
-    theme, updater, element, setElement, layout, onChange, UpdateButtons,
+    theme, updater, element, setElement, layout, onChange, onImportLayouts, UpdateButtons,
     classes = styles,
 }:LayoutManagerProps) => <div className={classes.layoutManager}>
     <Row gutter={[16,16]}>
-        <Col span={5}>
+        <Col span={4}>
             <h1>
                 <FontAwesomeIcon icon={faPaintRoller} /> Theme Designer
             </h1>
@@ -35,9 +36,12 @@ export const LayoutManagerComponent = overridable(({
                 Preview Live
             </Button>
         </Col>
-        <Col span={6}>
+        <Col span={7}>
             <div className={classes.header}>
-                <UpdateButtons />
+                <Space>
+                    <LayoutImport theme={theme} onImport={onImportLayouts} />
+                    <UpdateButtons />
+                </Space>
             </div>
         </Col>
     </Row>
