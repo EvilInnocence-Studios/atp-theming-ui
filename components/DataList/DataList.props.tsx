@@ -82,7 +82,7 @@ export const DataListPropEditor = (
                 return <>
                     <style>
                         .dataListMarkdownEditor .mdxeditor {"{"}
-                            max-width: 512px;
+                        max-width: 512px;
                         {"}"}
                     </style>
                     <div className="dataListMarkdownEditor">
@@ -111,7 +111,7 @@ export const DataListPropEditor = (
                 return (
                     <CoreDatePicker
                         value={value}
-                        onChange={(val) => updateCell(rowIndex, colName, val)}
+                        onChange={(val: string) => updateCell(rowIndex, colName, val)}
                         style={{ width: '100%' }}
                     />
                 );
