@@ -22,7 +22,7 @@ export const DataFieldComponent = overridable(({ className, css, dataType, value
             case "number":
                 return String(value);
             case "date": {
-                const d = dayjs(value);
+                const d = dayjs(String(value).split('T')[0]);
                 return d.isValid() ? d.format('MMMM D, YYYY') : String(value);
             }
             case "datetime": {

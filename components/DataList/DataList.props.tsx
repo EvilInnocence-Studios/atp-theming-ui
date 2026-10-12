@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { useState, useMemo, useRef } from "react";
 import { IDataListColumn, IDataListInputProps } from "./DataList.d";
 import { MarkdownEditor } from "@core/components/MarkdownEditor";
+import { DatePicker as CoreDatePicker } from "@core/components/DatePicker";
 import { MediaPicker } from "@common/components/MediaPicker";
 
 export const DataListPropEditor = (
@@ -108,9 +109,9 @@ export const DataListPropEditor = (
                 );
             case "date":
                 return (
-                    <DatePicker
-                        value={safeDayjs(value)}
-                        onChange={(date, dateString) => updateCell(rowIndex, colName, typeof dateString === 'string' ? dateString : date?.format("YYYY-MM-DD") || "")}
+                    <CoreDatePicker
+                        value={value}
+                        onChange={(val) => updateCell(rowIndex, colName, val)}
                         style={{ width: '100%' }}
                     />
                 );
